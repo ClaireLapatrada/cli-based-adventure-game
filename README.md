@@ -1,3 +1,5 @@
+# Shared Docs for pui claire
+https://docs.google.com/document/d/1Ez3APubmwXywDIuRtNh3vRW7N-BtwqWG4T7MbZHPJq4/edit?usp=sharing
 # 🏫 UofT Great Exam Heist Adventure Game 🕵️‍♂️
 
 Welcome to the University of Toronto's St. George campus, where your wit is tested beyond the exams! In this text-based adventure, you play as a student who's mysteriously lost their essential exam items. Are you ready to embark on a quest filled with humor, puzzles, and a touch of campus lore? 📜✨
