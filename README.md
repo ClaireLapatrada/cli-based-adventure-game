@@ -22,3 +22,7 @@ Clone the repository and dare to face the ultimate academic trial:
 git clone https://github.com/puyepuye/project1.git
 cd project1
 python adventure.py
+
+git add .
+git commit -m "message"
+git push
