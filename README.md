@@ -7,7 +7,7 @@ Welcome to the University of Toronto's St. George campus, where your wit is test
 ## Authors 🖊️
 
 - **[Lapatrada Jaroonjetjumnong](https://github.com/help)**  - Buys the caffeine and actually codes.
-- **[Sataphon Obra](https://github.com/puyepuye)** - ปลิง
+- **[Sataphon Obra](https://github.com/puyepuye)** - ปลิงตัวใหญ่
 
 ## Acknowledgments 🙌
 
