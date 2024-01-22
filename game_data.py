@@ -195,9 +195,9 @@ class World:
             self.map.append(row)
         return self.map
 
-    def load_location(self, location_data: TextIO) -> list[str]:
+    def load_location(self, location_data: TextIO) -> dict[int, Location]:
         """Load location data from the given file and store it in a dictionary."""
-        locations_list = []
+        locations_list = {}
         lines = location_data.readlines()
         i = 0
 
@@ -214,13 +214,15 @@ class World:
                     i += 1
 
                 location = Location(brief_description, long_description, points)
-                locations_list.append(location)
+                locations_list[location_number] = (location)
 
             i += 1
 
         return locations_list
 
+
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
+    def load_items(self, location_data: TextIO) -> dict[int, Location]:
 
     def get_location(self, x: int, y: int) -> Optional[Location]:
         """Return Location object associated with the coordinates (x, y) in the world map."""

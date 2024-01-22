@@ -34,7 +34,8 @@ if __name__ == "__main__":
         map = w.map
         print(map)
         location = w.get_location(p.x, p.y)
-        print(location.brief_description)
+
+        print(location.long_description)
         # print(location)
         # TODO: ENTER CODE HERE TO PRINT LOCATION DESCRIPTION
         # Depending on whether or not it's been visited before,
