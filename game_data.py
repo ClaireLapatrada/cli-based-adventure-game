@@ -143,37 +143,79 @@ class Item:
         for item in player.inventory:
             print(f"- {item.name}: {item.description}")
 
-    class Player:
-        """
-        A Player in the text advanture game.
+    def chase_squirrel():
+        print("You are following a squirrel.")
 
-        Instance Attributes:
-            - # TODO
+    def examine_squirrel():
+        print("It's a quick and nimble squirrel.")
 
-        Representation Invariants:
-            - # TODO
-        """
+    squirrel_interactions = {
+        'chase': chase_squirrel,
+        'examine': examine_squirrel
+    }
 
-        def __init__(self, x: int, y: int) -> None:
-            """
-            Initializes a new Player at position (x, y).
-            """
+    squirrel = Item("Squirrel", squirrel_interactions)
 
-            # NOTES:
-            # This is a suggested starter class for Player.
-            # You may change these parameters and the data available for the Player object as you see fit.
+    def press_vending_machine():
+        print("You press a button on the vending machine. It dispenses an item.")
 
-            self.x = x
-            self.y = y
-            self.inventory = []
-            self.victory = False
+    def hit_vending_machine():
+        print("You hit the vending machine. A gold coin falls out.")
 
-        # def move(self, direction: str, world: World):
-        #     if direction in world.map[self.x][self.y].exits:
-        #         new_x, new_y = world.map[self.x][self.y].exits[direction]
-        #         self.x, self.y = new_x, new_y
-        #     else:
-        #         print("You can't go that way.")
+    vending_machine_interactions = {
+        'press': press_vending_machine,
+        'hit': hit_vending_machine,
+        'examine': print("It's a vending machine filled with various items.")
+    }
+    vending_machine = Item("Vending Machine", vending_machine_interactions)
+
+    # Horseshoe interactions
+    def take_horseshoe():
+        print("You take the horseshoe and put it in your inventory.")
+
+    def use_horseshoe():
+        print("You use the horseshoe somehow.")
+
+    horseshoe_interactions = {
+        'examine': lambda: print("It's a horseshoe that seems to bring luck."),
+        'take': take_horseshoe,
+        'use': use_horseshoe
+    }
+    horseshoe = Item("Horseshoe", horseshoe_interactions)
+
+    # Art Gallery interactions
+    def next_painting(paintings, current):
+        current[0] = (current[0] + 1) % len(paintings)
+        print(paintings[current[0]])
+
+    paintings = ["Painting 1 Clue", "Painting 2 Clue", "Painting 3 Clue"]
+    current_painting = [0]  # Using a list to make it mutable
+
+    art_gallery_interactions = {
+        'next': lambda: next_painting(paintings, current_painting)
+    }
+    art_gallery = Item("Art Gallery", art_gallery_interactions)
+
+    # Horse Statue interactions
+    def mount_horse_statue():
+        print("You mount the horse statue.")
+
+    def dismount_horse_statue():
+        print("You dismount from the horse statue.")
+
+    def nail_shoe_horse_statue():
+        print("You nail the horseshoe to the horse statue.")
+
+    def open_mouth_horse_statue():
+        print("You open the horse statue's mouth. A letter falls out.")
+
+    horse_statue_interactions = {
+        'mount': mount_horse_statue,
+        'dismount': dismount_horse_statue,
+        'nail shoe': nail_shoe_horse_statue,
+        'open mouth': open_mouth_horse_statue
+    }
+    horse_statue = Item("Horse Statue", horse_statue_interactions)
 
 class World:
     """A text adventure game world storing all location, item and map data.
