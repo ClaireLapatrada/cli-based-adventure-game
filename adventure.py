@@ -24,18 +24,49 @@ from game_data import World, Item, Location, Player
 # Note: You may add helper functions, classes, etc. here as needed
 
 # Note: You may modify the code below as needed; the following starter template are just suggestions
+def main():
+    world = World(open("map.txt"), open("locations.txt"), open("items.txt"))
+    player = Player(0, 0)
+
+    print("Welcome to the Text Adventure Game!")
+    print("Enter commands to interact with the game world.")
+    print("Available commands: 'move [direction]', 'look', 'interact [item]', 'quit'")
+
+    while not player.victory:
+        command = input("Enter command: ").strip().lower()
+        if command.startswith('move'):
+            _, direction = command.split()
+            print('move')
+        elif command == 'look':
+            location = world.get_location(player.x, player.y)
+            if location is not None:
+                print(location.long_description)
+            else:
+                print("You can't see anything here.")
+        elif command.startswith('interact'):
+            _, item_name = command.split(maxsplit=1)
+            # Handle item interaction here
+        elif command == 'quit':
+            break
+        else:
+            print("Unknown command.")
+
+        # Add any additional game logic here
+
+
 if __name__ == "__main__":
-    w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
-    p = Player(0, 0)  # set starting location of player; you may change the x, y coordinates here as appropriate
-
-    menu = ["look", "inventory", "score", "quit", "back"]
-
-    while not p.victory:
-        map = w.map
-        print(map)
-        location = w.get_location(p.x, p.y)
-
-        print(location.long_description)
+    main()
+    # w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
+    # p = Player(0, 0)  # set starting location of player; you may change the x, y coordinates here as appropriate
+    #
+    # menu = ["look", "inventory", "score", "quit", "back"]
+    #
+    # while not p.victory:
+    #     map = w.map
+    #     print(map)
+    #     location = w.get_location(p.x, p.y)
+    #
+    #     print(location.long_description)
         # print(location)
         # TODO: ENTER CODE HERE TO PRINT LOCATION DESCRIPTION
         # Depending on whether or not it's been visited before,

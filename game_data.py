@@ -303,7 +303,7 @@ class World:
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
     def load_items(self, location_data: TextIO) -> dict[int, Location]:
-
+        pass
     def get_location(self, x: int, y: int) -> Optional[Location]:
         """Return Location object associated with the coordinates (x, y) in the world map."""
         if 0 <= x < len(self.map) and 0 <= y < len(self.map[0]):
