@@ -4,7 +4,7 @@ Instructions (READ THIS FIRST!)
 ===============================
 
 This Python module contains the main classes for Project 1, to be imported and used by
- the adventure module.
+ the `adventure` module.
  Please consult the project handout for instructions and details.
 
 Copyright and Usage Information
@@ -133,7 +133,9 @@ class Item:
 
     def interact(self, action: str):
         """Perform an action with this item."""
-        if action in self.interactions:
+        if action == "next":
+            self.next_painting()
+        elif action in self.interactions:
             self.interactions[action]()
         else:
             print(f"The action '{action}' is not available for {self.name}.")
@@ -144,7 +146,7 @@ class Item:
         for item in player.inventory:
             print(f"- {item.name}: {item.description}")
 
-    def next_painting(self, current: int = 0):
+    def next_painting(self, current: int = -1):
         """Move to the next paintings"""
         paintings = ["Painting 1 Clue", "Painting 2 Clue", "Painting 3 Clue", "Painting 4 Clue", "Painting 5 Clue"]
         print(paintings[current + 1])
@@ -170,9 +172,6 @@ horse_statue_interactions = {
         'nail shoe': lambda: print("You nail the horseshoe to the horse statue."),
         'open mouth': lambda: print("You open the horse statue's mouth. A letter falls out."),
     }
-art_gallery_interactions = {
-    'next': lambda: next_painting()
-}
 
 
 class World:
@@ -265,4 +264,9 @@ class World:
         pass
 
     def get_location(self, x: int, y: int) -> Optional[Location]:
-        """Return Location object associated with the coordinat
+        """Return Location object associated with the coordinates (x, y) in the world map."""
+        if 0 <= x < len(self.map) and 0 <= y < len(self.map[0]):
+            location_index = self.map[x][y]
+            if location_index != -1:
+                return self.locations[location_index]
+        return None
