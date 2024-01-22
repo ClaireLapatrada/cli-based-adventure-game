@@ -78,32 +78,6 @@ class Location:
     #     actions = ["look", "pick up [item]", "go [direction]"]
     #     return actions
 
-
-class Item:
-    """An item in our text adventure game world.
-
-    Instance Attributes:
-        - # TODO
-
-    Representation Invariants:
-        - # TODO
-    """
-
-    def __init__(self, name: str, interactions=None) -> None:
-        """Initialize a new item."""
-        self.name = name
-        if interactions is None:
-            interactions = {}
-        self.interactions = interactions
-
-    def interact(self, action: str):
-        """Perform an action with this item."""
-        if action in self.interactions:
-            self.interactions[action]()
-        else:
-            print(f"The action '{action}' is not available for {self.name}.")
-
-
 class Player:
     """
     A Player in the text advanture game.
@@ -136,6 +110,70 @@ class Player:
     #     else:
     #         print("You can't go that way.")
 
+
+class Item:
+    """An item in our text adventure game world.
+
+    Instance Attributes:
+        - name: name of the item
+        - description: description and usage of the items
+        - interactions: sets of commands that can be used with the item
+
+    Representation Invariants:
+        - self.name != ""
+        - self.description != ""
+    """
+
+    def __init__(self, name: str, interactions: dict = None) -> None:
+        """Initialize a new item."""
+        self.name = name
+        if interactions is None:
+            interactions = {}
+        self.interactions = interactions
+
+    def interact(self, action: str):
+        """Perform an action with this item."""
+        if action in self.interactions:
+            self.interactions[action]()
+        else:
+            print(f"The action '{action}' is not available for {self.name}.")
+    def show_inventory(self, player: Player):
+        """Show player's entire inventory."""
+        print("Inventory:")
+        for item in player.inventory:
+            print(f"- {item.name}: {item.description}")
+
+    class Player:
+        """
+        A Player in the text advanture game.
+
+        Instance Attributes:
+            - # TODO
+
+        Representation Invariants:
+            - # TODO
+        """
+
+        def __init__(self, x: int, y: int) -> None:
+            """
+            Initializes a new Player at position (x, y).
+            """
+
+            # NOTES:
+            # This is a suggested starter class for Player.
+            # You may change these parameters and the data available for the Player object as you see fit.
+
+            self.x = x
+            self.y = y
+            self.inventory = []
+            self.victory = False
+
+        # def move(self, direction: str, world: World):
+        #     if direction in world.map[self.x][self.y].exits:
+        #         new_x, new_y = world.map[self.x][self.y].exits[direction]
+        #         self.x, self.y = new_x, new_y
+        #     else:
+        #         print("You can't go that way.")
 
 class World:
     """A text adventure game world storing all location, item and map data.
