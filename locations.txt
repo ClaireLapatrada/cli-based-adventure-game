@@ -4,6 +4,11 @@ That way is blocked.
 That way is blocked.
 END
 
+LOCATION 0
+0
+help me god
+END
+
 LOCATION 1
 0
 You are on the first floor of the Robarts Library. There is an empty study room to the South, an exit from the library to the East.

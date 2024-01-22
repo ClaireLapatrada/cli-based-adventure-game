@@ -31,23 +31,27 @@ if __name__ == "__main__":
     menu = ["look", "inventory", "score", "quit", "back"]
 
     while not p.victory:
+        map = w.map
+        print(map)
         location = w.get_location(p.x, p.y)
-
+        print(location.brief_description)
+        # print(location)
         # TODO: ENTER CODE HERE TO PRINT LOCATION DESCRIPTION
         # Depending on whether or not it's been visited before,
         # print either full description (first time visit) or brief description (every subsequent visit)
 
-        print("What to do? \n")
-        print("[menu]")
-        for action in location.available_actions():
-            print(action)
-        choice = input("\nEnter action: ")
+        # print("What to do? \n")
+        # print("[menu]")
+        # for action in location.available_actions():
+        #     print(action)
+        # choice = input("\nEnter action: ")
+        #
+        # if choice == "[menu]":
+        #     print("Menu Options: \n")
+        #     for option in menu:
+        #         print(option)
+        #     choice = input("\nChoose action: ")
 
-        if choice == "[menu]":
-            print("Menu Options: \n")
-            for option in menu:
-                print(option)
-            choice = input("\nChoose action: ")
 
         # TODO: CALL A FUNCTION HERE TO HANDLE WHAT HAPPENS UPON THE PLAYER'S CHOICE
         #  REMEMBER: the location = w.get_location(p.x, p.y) at the top of this loop will update the location if

@@ -18,20 +18,23 @@ please consult our Course Syllabus.
 
 This file is Copyright (c) 2024 CSC111 Teaching Team
 """
-from typing import Optional, TextIO
+from typing import Optional, TextIO, Dict, List
 
 
 class Location:
     """A location in our text adventure game world.
 
     Instance Attributes:
-        - # TODO
+        -
+        - descriptions:
+        - return:
 
     Representation Invariants:
-        - # TODO
+        -
     """
 
-    def __init__(self) -> None:
+    #def __init__(self, description: str, items: List[str], exits: Dict[str, int]) -> None:
+    def __init__(self, brief_description: str, long_description: str, points: int) -> None:
         """Initialize a new location.
 
         # TODO Add more details here about the initialization if needed
@@ -52,21 +55,28 @@ class Location:
         #
         # The only thing you must NOT change is the name of this class: Location.
         # All locations in your game MUST be represented as an instance of this class.
+        self.description = brief_description
+        self.long_description = long_description
+        self.points = points
 
-        # TODO: Complete this method
+        # self.items = items
+        # self.exits = exits
+        # self.visited = False
 
-    def available_actions(self):
-        """
-        Return the available actions in this location.
-        The actions should depend on the items available in the location
-        and the x,y position of this location on the world map.
-        """
-
-        # NOTE: This is just a suggested method
-        # i.e. You may remove/modify/rename this as you like, and complete the
-        # function header (e.g. add in parameters, complete the type contract) as needed
-
-        # TODO: Complete this method, if you'd like or remove/replace it if you're not using it
+    # def look(self):
+    #     return self.description if not self.visited else "You are back in the room."
+    # def available_actions(self):
+    #     """
+    #     Return the available actions in this location.
+    #     The actions should depend on the items available in the location
+    #     and the x,y position of this location on the world map.
+    #     """
+    #
+    #     # NOTE: This is just a suggested method
+    #     # i.e. You may remove/modify/rename this as you like, and complete the
+    #     # function header (e.g. add in parameters, complete the type contract) as needed
+    #     actions = ["look", "pick up [item]", "go [direction]"]
+    #     return actions
 
 
 class Item:
@@ -79,23 +89,19 @@ class Item:
         - # TODO
     """
 
-    def __init__(self, name: str, start: int, target: int, target_points: int) -> None:
-        """Initialize a new item.
-        """
-
-        # NOTES:
-        # This is just a suggested starter class for Item.
-        # You may change these parameters and the data available for each Item object as you see fit.
-        # (The current parameters correspond to the example in the handout).
-        # Consider every method in this Item class as a "suggested method".
-        #
-        # The only thing you must NOT change is the name of this class: Item.
-        # All item objects in your game MUST be represented as an instance of this class.
-
+    def __init__(self, name: str, interactions=None) -> None:
+        """Initialize a new item."""
         self.name = name
-        self.start_position = start
-        self.target_position = target
-        self.target_points = target_points
+        if interactions is None:
+            interactions = {}
+        self.interactions = interactions
+
+    def interact(self, action: str):
+        """Perform an action with this item."""
+        if action in self.interactions:
+            self.interactions[action]()
+        else:
+            print(f"The action '{action}' is not available for {self.name}.")
 
 
 class Player:
@@ -123,13 +129,22 @@ class Player:
         self.inventory = []
         self.victory = False
 
+    # def move(self, direction: str, world: World):
+    #     if direction in world.map[self.x][self.y].exits:
+    #         new_x, new_y = world.map[self.x][self.y].exits[direction]
+    #         self.x, self.y = new_x, new_y
+    #     else:
+    #         print("You can't go that way.")
+
 
 class World:
     """A text adventure game world storing all location, item and map data.
 
     Instance Attributes:
         - map: a nested list representation of this world's map
-        - # TODO add more instance attributes as needed; do NOT remove the map attribute
+        - player:
+        - locations:
+        - item:
 
     Representation Invariants:
         - # TODO
@@ -154,6 +169,8 @@ class World:
 
         # The map MUST be stored in a nested list as described in the load_map() function's docstring below
         self.map = self.load_map(map_data)
+        self.locations = self.load_location(location_data)
+        # self.i
 
         # NOTE: You may choose how to store location and item data; create your own World methods to handle these
         # accordingly. The only requirements:
@@ -172,16 +189,43 @@ class World:
 
         Return this list representation of the map.
         """
+        self.map = []
+        for line in map_data:
+            row = [int(location) for location in line.strip().split()]
+            self.map.append(row)
+        return self.map
 
-        # TODO: Complete this method as specified. Do not modify any of this function's specifications.
+    def load_location(self, location_data: TextIO) -> list[str]:
+        """Load location data from the given file and store it in a dictionary."""
+        locations_list = []
+        lines = location_data.readlines()
+        i = 0
 
-    # TODO: Add methods for loading location data and item data (see note above).
+        while i < len(lines):
+            if lines[i].startswith("LOCATION"):
+                location_number = int(lines[i].split()[1].strip())
+                points = int(lines[i + 1].strip())
+                brief_description = lines[i + 2].strip()
+                long_description = ""
+
+                i += 3  # Skip to the start of long description
+                while i < len(lines) and lines[i].strip() != "END":
+                    long_description += lines[i].strip() + "\n"
+                    i += 1
+
+                location = Location(brief_description, long_description, points)
+                locations_list.append(location)
+
+            i += 1
+
+        return locations_list
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
-    def get_location(self, x: int, y: int) -> Optional[Location]:
-        """Return Location object associated with the coordinates (x, y) in the world map, if a valid location exists at
-         that position. Otherwise, return None. (Remember, locations represented by the number -1 on the map should
-         return None.)
-        """
 
-        # TODO: Complete this method as specified. Do not modify any of this function's specifications.
+    def get_location(self, x: int, y: int) -> Optional[Location]:
+        """Return Location object associated with the coordinates (x, y) in the world map."""
+        if 0 <= x < len(self.map) and 0 <= y < len(self.map[0]):
+            location_index = self.map[x][y]
+            if location_index != -1:
+                return self.locations[location_index]
+        return None
