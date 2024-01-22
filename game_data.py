@@ -110,7 +110,6 @@ class Player:
     #     else:
     #         print("You can't go that way.")
 
-
 class Item:
     """An item in our text adventure game world.
 
@@ -137,85 +136,41 @@ class Item:
             self.interactions[action]()
         else:
             print(f"The action '{action}' is not available for {self.name}.")
+
     def show_inventory(self, player: Player):
         """Show player's entire inventory."""
         print("Inventory:")
         for item in player.inventory:
             print(f"- {item.name}: {item.description}")
+    def next_painting(self, current: int = 0):
+        """Move to the next paintings"""
+        paintings = ["Painting 1 Clue", "Painting 2 Clue", "Painting 3 Clue", "Painting 4 Clue", "Painting 5 Clue"]
+        print(paintings[current + 1])
 
-    def chase_squirrel():
-        print("You are following a squirrel.")
-
-    def examine_squirrel():
-        print("It's a quick and nimble squirrel.")
-
-    squirrel_interactions = {
-        'chase': chase_squirrel,
-        'examine': examine_squirrel
+squirrel_interactions = {
+        'chase': lambda: print("You are following a squirrel."),
+        'examine': lambda: print("It's a quick and nimble squirrel.")
+        }
+vending_machine_interactions = {
+        'press': lambda: print("You press a button on the vending machine. It dispenses an item."),
+        'hit': lambda: print("You hit the vending machine. A gold coin falls out."),
+        'examine': lambda: print("It's a vending machine filled with various items.")
     }
-
-    squirrel = Item("Squirrel", squirrel_interactions)
-
-    def press_vending_machine():
-        print("You press a button on the vending machine. It dispenses an item.")
-
-    def hit_vending_machine():
-        print("You hit the vending machine. A gold coin falls out.")
-
-    vending_machine_interactions = {
-        'press': press_vending_machine,
-        'hit': hit_vending_machine,
-        'examine': print("It's a vending machine filled with various items.")
-    }
-    vending_machine = Item("Vending Machine", vending_machine_interactions)
-
-    # Horseshoe interactions
-    def take_horseshoe():
-        print("You take the horseshoe and put it in your inventory.")
-
-    def use_horseshoe():
-        print("You use the horseshoe somehow.")
-
-    horseshoe_interactions = {
+horseshoe_interactions = {
         'examine': lambda: print("It's a horseshoe that seems to bring luck."),
-        'take': take_horseshoe,
-        'use': use_horseshoe
+        'take': lambda: print("You take the horseshoe and put it in your inventory."),
+        'use': lambda: print("You use the horseshoe somehow.")
     }
-    horseshoe = Item("Horseshoe", horseshoe_interactions)
-
-    # Art Gallery interactions
-    def next_painting(paintings, current):
-        current[0] = (current[0] + 1) % len(paintings)
-        print(paintings[current[0]])
-
-    paintings = ["Painting 1 Clue", "Painting 2 Clue", "Painting 3 Clue"]
-    current_painting = [0]  # Using a list to make it mutable
-
-    art_gallery_interactions = {
-        'next': lambda: next_painting(paintings, current_painting)
+horse_statue_interactions = {
+        'mount': lambda: print("You mount the horse statue."),
+        'dismount': lambda: print("You dismount from the horse statue."),
+        'nail shoe': lambda: print("You nail the horseshoe to the horse statue."),
+        'open mouth': lambda: print("You open the horse statue's mouth. A letter falls out."),
     }
-    art_gallery = Item("Art Gallery", art_gallery_interactions)
+art_gallery_interactions = {
+    'next': lambda: next_painting()
+}
 
-    # Horse Statue interactions
-    def mount_horse_statue():
-        print("You mount the horse statue.")
-
-    def dismount_horse_statue():
-        print("You dismount from the horse statue.")
-
-    def nail_shoe_horse_statue():
-        print("You nail the horseshoe to the horse statue.")
-
-    def open_mouth_horse_statue():
-        print("You open the horse statue's mouth. A letter falls out.")
-
-    horse_statue_interactions = {
-        'mount': mount_horse_statue,
-        'dismount': dismount_horse_statue,
-        'nail shoe': nail_shoe_horse_statue,
-        'open mouth': open_mouth_horse_statue
-    }
-    horse_statue = Item("Horse Statue", horse_statue_interactions)
 
 class World:
     """A text adventure game world storing all location, item and map data.
@@ -303,6 +258,8 @@ class World:
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
     def load_items(self, location_data: TextIO) -> dict[int, Location]:
+        """load items"""
+        pass
 
     def get_location(self, x: int, y: int) -> Optional[Location]:
         """Return Location object associated with the coordinates (x, y) in the world map."""
