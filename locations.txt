@@ -21,6 +21,7 @@ beckons you closer, casting an eerie glow in the otherwise pitch-black environme
 It's unclear what secrets this machine holds, but it seems to be your only point of interaction in this enigmatic space.
 END
 
+LOCATION 2
 0
 A hallway full of paintings in Hart House.
 As you step into the hallway, a surreal silence envelops you.

@@ -3,7 +3,7 @@ from game_data2 import World, Item, Location, Player
 
 #Location-1 (Vending) Helper Functions
 def handle_location1(command, player, world):
-    if "move closer" in command or "vending" in command:
+    if "vending" in command:
         if world.locations[2].unlocked:
             print("Vending Machine Puzzle has been solved. No other useful clues. ")
         else:
@@ -32,7 +32,7 @@ def passkey_vending(player, world):
             print("You are not sure what to do with that.")
 
 #Location 2 - (Hallway with Painting)
-def handle_command2(command, player, world):
+def handle_location2(command, player, world):
     if command.startswith('talk'):
         if world.locations[3].unlocked:
             print("Talking with paintings won't solve more of your problems")
@@ -84,16 +84,17 @@ def handle_command(command, player, world):
 
     if current_location_index == 2:
         return handle_location2(command, player, world)
+
     return True
 
 
 
-def print_progress_bar(duration=5, width=30):
+def print_progress_bar(word, duration=0.25, width=30):
     """Prints a simple progress bar in the console over a given duration of time."""
     for i in range(width + 1):
         percent = (i / width) * 100
         bar = '#' * i + '-' * (width - i)
-        print(f"\rProgress: [{bar}] {percent:.2f}%", end="")
+        print(f"\r{word}: [{bar}] {percent:.2f}%", end="")
         time.sleep(duration / width)
     print()
 
@@ -111,12 +112,13 @@ if __name__ == "__main__":
     print("You wake up in your room and see a squirrel outside your window...")
     print("type 'follow squirrel'")
     command = input(">> ").strip().lower()
-    if command.startswith('follow'):
-        print_progress_bar(duration=5, width=30)
-    else:
+    while not command.startswith('follow'):
         print("do you need TYPING LESSSONS")
-    print(world.get_location(player.x, player.y).description)
+        command = input(">> ").strip().lower()
+    print_progress_bar('Following Squirel', duration=5, width=30)
     world.locations[1].unlock()  # Unlock room 1 for testing
+    player.set_location(0, 1)
+    print(world.get_location(player.x, player.y).long_description)
     continue_game = True
     while continue_game:
         current_location = world.get_location(player.x, player.y)
