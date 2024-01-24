@@ -6,23 +6,27 @@ END
 
 LOCATION 0
 0
-help me god
+This is the Room that you wake up in.
 This is the room with the vending Machine ya.
 END
 
 LOCATION 1
 0
-You are on the first floor of the Robarts Library. There is an empty study room to the South, an exit from the library to the East.
-You are on the first floor of the Robarts Library. It's usually crowded at this time of the day, but today it's eerily quiet.
-Only a few students are studying inside one of the study rooms. You better not disturb them. A librarian stands near the
-service desk, looking bored and sleepy. There is an empty study room to the South, an exit from the library to the East.
+You are in a dimly lit room with a glimmering vending machine as the focal point.
+You find yourself in a dark room, the only source of light emanating from a strangely
+attractive vending machine that glimmers in the corner. The room feels confined,
+with no visible exits or windows. The door you entered through now seems permanently locked,
+effectively cutting off any retreat. The vending machine, with its soft humming and flickering lights,
+beckons you closer, casting an eerie glow in the otherwise pitch-black environment.
+It's unclear what secrets this machine holds, but it seems to be your only point of interaction in this enigmatic space.
 END
 
-LOCATION 2
 0
-This study room is completely empty.
-You are in an empty study room. And by empty, we mean, absolutely empty. All the tables and chairs have been taken out,
-the whiteboards taken off the wall, not even the carpeting is left. Are they planning to do something else with this space?
+A hallway full of paintings in Hart House.
+As you step into the hallway, a surreal silence envelops you.
+The walls are adorned with various paintings, each one seemingly alive in the dim light of dawn.
+There's no one around, yet you hear faint whispers, as if the painted figures are conversing in hushed tones.
+Could talking to the paintings provide clue for your next adventure?
 END
 
 LOCATION 3
