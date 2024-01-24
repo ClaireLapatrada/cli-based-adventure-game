@@ -7,7 +7,7 @@ END
 LOCATION 0
 0
 help me god
-ok bros
+This is the room with the vending Machine ya.
 END
 
 LOCATION 1

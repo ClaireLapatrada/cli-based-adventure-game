@@ -26,17 +26,23 @@ from game_data import World, Item, Location, Player
 # Note: You may modify the code below as needed; the following starter template are just suggestions
 def main():
     world = World(open("map.txt"), open("locations.txt"), open("items.txt"))
-    player = Player(0, 0)
+    player = Player(0, 0)  # Assuming (0, 0) is the "Wake Up" location on your map
+
+    # Assuming the squirrel is an item at the "Wake Up" location
+    squirrel = Item("Squirrel", {
+        'examine': lambda: print("It's a quick and nimble squirrel."),
+        'chase': lambda: print("You are following a squirrel.")
+    })
 
     print("Welcome to the Text Adventure Game!")
-    print("Enter commands to interact with the game world.")
+    print("You wake up in your room and see a squirrel outside your window.")
     print("Available commands: 'move [direction]', 'look', 'interact [item]', 'quit'")
 
     while not player.victory:
         command = input("Enter command: ").strip().lower()
         if command.startswith('move'):
             _, direction = command.split()
-            print('move')
+            print('You move ' + direction)
         elif command == 'look':
             location = world.get_location(player.x, player.y)
             if location is not None:
@@ -45,16 +51,16 @@ def main():
                 print("You can't see anything here.")
         elif command.startswith('interact'):
             _, item_name = command.split(maxsplit=1)
-            # Handle item interaction here
+            if item_name == 'squirrel':
+                squirrel.interact(_)  # Replace _ with the specific action (e.g., 'examine' or 'chase')
+            else:
+                print("You can't interact with that.")
         elif command == 'quit':
             break
         else:
             print("Unknown command.")
 
-        # Add any additional game logic here
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
     # w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     # p = Player(0, 0)  # set starting location of player; you may change the x, y coordinates here as appropriate

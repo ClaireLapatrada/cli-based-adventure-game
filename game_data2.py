@@ -1,83 +1,4 @@
-"""CSC111 Project 1: Text Adventure Game Classes
-
-Instructions (READ THIS FIRST!)
-===============================
-
-This Python module contains the main classes for Project 1, to be imported and used by
- the `adventure` module.
- Please consult the project handout for instructions and details.
-
-Copyright and Usage Information
-===============================
-
-This file is provided solely for the personal and private use of students
-taking CSC111 at the University of Toronto St. George campus. All forms of
-distribution of this code, whether as given or with any changes, are
-expressly prohibited. For more information on copyright for CSC111 materials,
-please consult our Course Syllabus.
-
-This file is Copyright (c) 2024 CSC111 Teaching Team
-"""
 from typing import Optional, TextIO, Dict, List
-
-
-class Location:
-    """A location in our text adventure game world.
-
-    Instance Attributes:
-        -
-        - descriptions:
-        - return:
-
-    Representation Invariants:
-        -
-    """
-    #def __init__(self, description: str, items: List[str], exits: Dict[str, int]) -> None:
-    def __init__(self, brief_description: str, long_description: str, points: int) -> None:
-        """Initialize a new location.
-
-        # TODO Add more details here about the initialization if needed
-        """
-
-        # NOTES:
-        # Data that could be associated with each Location object:
-        # a position in the world map,
-        # a brief description,
-        # a long description,
-        # a list of available commands/directions to move,
-        # items that are available in the location,
-        # and whether the location has been visited before.
-        # Store these as you see fit, using appropriate data types.
-        #
-        # This is just a suggested starter class for Location.
-        # You may change/add parameters and the data available for each Location object as you see fit.
-        #
-        # The only thing you must NOT change is the name of this class: Location.
-        # All locations in your game MUST be represented as an instance of this class.
-        self.description = brief_description
-        self.long_description = long_description
-        self.available_actions =
-        self.points = points
-
-        # self.items = items
-        # self.exits = exits
-        # self.visited = False
-
-    def look(self):
-        return self.description
-    #   if not self.visited else "You are back in the room."
-    def available_actions(self):
-        """
-        Return the available actions in this location.
-        The actions should depend on the items available in the location
-        and the x,y position of this location on the world map.
-        """
-
-        # NOTE: This is just a suggested method
-        # i.e. You may remove/modify/rename this as you like, and complete the
-        # function header (e.g. add in parameters, complete the type contract) as needed
-        actions = ["look", "pick up [item]", "go [direction]"]
-        return actions
 
 
 class Player:
@@ -96,26 +17,36 @@ class Player:
         Initializes a new Player at position (x, y).
         """
 
-        # NOTES:
-        # This is a suggested starter class for Player.
-        # You may change these parameters and the data available for the Player object as you see fit.
-
         self.x = x
         self.y = y
         self.inventory = []
         self.victory = False
-    def move(selfself, direction: str):
-        pass
 
-    # def move(self, direction: str, world: World):
-    #     if direction in world.map[self.x][self.y].exits:
-    #         new_x, new_y = world.map[self.x][self.y].exits[direction]
+    # def move(self, direction: str, exits: dict):
+    #     if direction in exits:
+    #         new_x, new_y = exits[direction]
     #         self.x, self.y = new_x, new_y
     #     else:
     #         print("You can't go that way.")
+    def move(self, direction: str, world_map: list[list[int]]) -> (str, int, int):
+        new_x, new_y = self.x, self.y
+
+        if direction == 'north':
+            new_x -= 1
+        elif direction == 'south':
+            new_x += 1
+        elif direction == 'east':
+            new_y += 1
+        elif direction == 'west':
+            new_y -= 1
+
+        if 0 <= new_x < len(world_map) and 0 <= new_y < len(world_map[0]):
+            return ("valid", new_x, new_y)
+        else:
+            return ("invalid", self.x, self.y)
     def set_location(self, x: int, y: int):
         self.x = x
-        self.y = x
+        self.y = y
 
 class Item:
     def __init__(self, name: str, interactions: dict = None) -> None:
@@ -179,6 +110,40 @@ horse_statue_interactions = {
     }
 
 
+class Location:
+    """A location in our text adventure game world.
+
+    Instance Attributes:
+        -
+        - descriptions:
+        - return:
+
+    Representation Invariants:
+        -
+    """
+    #def __init__(self, description: str, items: List[str], exits: Dict[str, int]) -> None:
+    def __init__(self, brief_description: str, long_description: str, points: int, visited: bool, unlocked: bool) -> None:
+        self.description = brief_description
+        self.long_description = long_description
+        self.points = points
+        self.items = []
+        self.visited = visited
+        self.unlocked = unlocked
+
+    def look(self):
+        return self.description
+    def add_item(self, item: Item):
+        """Add an item to this location."""
+        self.items.append(item)
+
+    def available_objects(self):
+        """Print out all items in this location."""
+        for item in self.items:
+            print(item.name)
+
+    def unlock(self):
+        self.unlocked = True
+
 class World:
     """A text adventure game world storing all location, item and map data.
 
@@ -212,14 +177,9 @@ class World:
         # The map MUST be stored in a nested list as described in the load_map() function's docstring below
         self.map = self.load_map(map_data)
         self.locations = self.load_location(location_data)
-        # self.i
+        self.load_items(items_data)
 
-        # NOTE: You may choose how to store location and item data; create your own World methods to handle these
-        # accordingly. The only requirements:
-        # 1. Make sure the Location class is used to represent each location.
-        # 2. Make sure the Item class is used to represent each item.
-
-    # NOTE: The method below is REQUIRED. Complete it exactly as specified.
+    #Required method
     def load_map(self, map_data: TextIO) -> list[list[int]]:
         """
         Store map from open file map_data as the map attribute of this object, as a nested list of integers like so:
@@ -255,7 +215,9 @@ class World:
                     long_description += lines[i].strip() + "\n"
                     i += 1
 
-                location = Location(brief_description, long_description, points)
+                visited = False
+                unlocked = False
+                location = Location(brief_description, long_description, points, visited, unlocked)
                 locations_list[location_number] = (location)
 
             i += 1
@@ -264,9 +226,18 @@ class World:
 
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
-    def load_items(self, location_data: TextIO) -> dict[int, Location]:
-        """load items"""
-        pass
+    def load_items(self, items_data: TextIO):
+        """Load items from the given file and add them to their respective locations."""
+        for line in items_data:
+            parts = line.strip().split()
+            location_index = int(parts[0])
+            item_name = ' '.join(parts[1:])
+
+            # Create the item (assuming you have a method to create items based on the name)
+
+            # Add the item to the respective location
+            if location_index in self.locations:
+                self.locations[location_index].add_item(item_name)
 
     def get_location(self, x: int, y: int) -> Optional[Location]:
         """Return Location object associated with the coordinates (x, y) in the world map."""
