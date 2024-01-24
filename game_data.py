@@ -104,7 +104,7 @@ class Player:
         self.y = y
         self.inventory = []
         self.victory = False
-    def move(selfself, direction: str):
+    def move(self, direction: str):
         pass
 
     # def move(self, direction: str, world: World):
@@ -116,6 +116,7 @@ class Player:
     def set_location(self, x: int, y: int):
         self.x = x
         self.y = x
+
 
 class Item:
     def __init__(self, name: str, interactions: dict = None) -> None:

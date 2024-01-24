@@ -23,6 +23,9 @@ def passkey_vending(player, world):
             if code == "correct_code":  # Replace with the actual code
                 print("You hear a click sound as the next room is unlocked.")
                 world.locations[2].unlock()  # Assuming location 2 is the next one
+                print(" -- ACORN and TCARD has been acquired! Type 'inventory' to see. -- ")
+                player.inventory.append("ACORN")
+                player.inventory.append("TCARD")
                 return True
             else:
                 print("Nothing happens. It seems to be the wrong code.")
@@ -30,6 +33,7 @@ def passkey_vending(player, world):
             return False
         else:
             print("You are not sure what to do with that.")
+
 
 #Location 2 - (Hallway with Painting)
 def handle_location2(command, player, world):
@@ -137,4 +141,5 @@ if __name__ == "__main__":
                 print("There's nothing to look at here.")
         elif command == 'item':
             print(world.get_location(player.x, player.y).items)
-
+        elif command == 'inventory':
+            print(player.inventory)
