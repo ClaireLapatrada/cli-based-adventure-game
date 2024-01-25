@@ -142,7 +142,7 @@ def horse_statue_read(command, player, world):
     print("The horse's mouth opened up. Seems like something is in there.")
     while True:
         inp = input(">> ").strip().lower()
-        if inp == 'look':
+        if inp == 'inspect':
             print("There is a mystery letter in here. It reads ['astronomeeee']")
             print()
             print("The letter might be useful later on. You might want to keep it.")
