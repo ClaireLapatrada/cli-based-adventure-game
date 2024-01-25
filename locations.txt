@@ -23,7 +23,7 @@ END
 
 LOCATION 2
 0
-A hallway full of paintings in Hart House.
+You are in a hallway full of paintings in Hart House.
 As you step into the hallway, a surreal silence envelops you.
 The walls are adorned with various paintings, each one seemingly alive in the dim light of dawn.
 There's no one around, yet you hear faint whispers, as if the painted figures are conversing in hushed tones.
@@ -32,6 +32,18 @@ END
 
 LOCATION 3
 0
-You are outside the Robarts library.
-You are outside the Robarts library on a crowded street. There is a smell of coffee in the air.
+You are at the heart of Queen’s Park.
+You wander into the dawn of Queen's Park where trees wear glistening snow like delicate jewels.
+The majestic horse statue stands prominent amidst the tranquil surroundings.
+You sensed a bond with the horse statue, as if it possessed an intriguing allure that drew you in.
+It felt as though the gaze of the horse statue locked onto yours,
+establishing a silent connection between you and the majestic sculpture.
+Maybe you should look around the statue. What might the horse statue be seeking from you?
 END
+
+LOCATION 4
+0
+You are at the infamous McLennan Physics Lab.
+pppppppp
+pppppp
+pppppppppppp
