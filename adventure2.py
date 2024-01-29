@@ -1,8 +1,17 @@
+"""The main adventure.py file. Click run on this file to start the game. """
 import time
 from game_data2 import World, Item, Location, Player
 
-#Location-1 (Vending) Helper Functions
+acorn = Item("Acorn", (0, 1))
+tcard = Item("T-card", (0, 1))
+letter = Item("Letter", (0, 2))
+horse_shoe = Item("Horse Shoe", (1, 2))
+pen = Item("Pen")
+
+
+# Location-1 (Vending) Helper Functions
 def handle_location1(command, player, world):
+    """Start location 1's events if it has not been cleared yet, else notify the player."""
     if "vending" in command:
         if world.locations[2].unlocked:
             print("Vending Machine Puzzle has been solved. No other useful clues. ")
@@ -12,32 +21,37 @@ def handle_location1(command, player, world):
     #     print("Nothing interesting happens.")
     return True
 
+
 def passkey_vending(player, world):
+    """Ask player for input for the vending machine, drop item when the correct code has been input.
+    Handle all other commands."""
     print("The vending machine has no slot for coins, only an alphanumeric keypad.")
     while True:
-        command = input(">> ").strip().lower()
-        if command.startswith("inspect"):
+        inp = input(">> ").strip().lower()
+        if inp.startswith("inspect"):
             print("You inspect the vending machine closely.")
-        elif command == "type code":
+        elif inp == "type code":
             code = input("Enter code: ").strip()
             if code == "correct_code":  # Replace with the actual code
                 print("You hear a click sound as the next room is unlocked.")
                 world.locations[2].unlock()  # Assuming location 2 is the next one
-                acquire(player, "ACORN")
-                acquire(player, "Nail Shoe")
+                player.acquire(acorn)
+                player.acquire(horse_shoe)
                 return True
             else:
                 print("Nothing happens. It seems to be the wrong code.")
-        elif command == "quit":
+        elif inp == "quit":
             return False
         else:
             print("You are not sure what to do with that.")
 
 
-#Location 2 - (Hallway with Painting)
+# Location 2 - (Hallway with Painting)
 current_painting_index = 0
 
+
 def handle_location2(command, player, world):
+    """Start location 2's events if it has not been cleared yet, else notify the player."""
     global current_painting_index
 
     if command == 'talk':
@@ -48,12 +62,15 @@ def handle_location2(command, player, world):
     elif command == 'next':
         current_painting_index += 1
         return paintings_hint(player, world)
-    else:
-        print("You can't do that here.")
+    # else:
+    #     print("You can't do that here.")
 
     return True
 
+
 def paintings_hint(player, world):
+    """move to the next painting and call the door puzzle onve all paintings have been visited.
+    Handle all other commands."""
     global current_painting_index
     paintings = [
         "get ready to receive words of wisdom from the paintings",
@@ -71,7 +88,10 @@ def paintings_hint(player, world):
         return door_puzzle(player, world)
     return True
 
+
 def door_puzzle(player, world):
+    """Ask user for input to the door puzzle, with animation when revealing the correct code.
+    Handle all other commands."""
     solution = "secret"
     while True:
         print("\nYou stand before a door with no handles, only a panel with letters.")
@@ -96,49 +116,47 @@ def door_puzzle(player, world):
             return False
         else:
             print("\nNothing happens. Perhaps the clues in the paintings can help.")
-    #world.locations[3].unlock()
-    return True
 
 
 # Location 3 - (Horse Statue)
 def handle_location3(command, player, world):
+    """Start location 3 events if it has not been cleared yet, else notify the player."""
     if command == 'look':
         if world.locations[4].unlocked:
             print("The horse isn't here anymore.")
         else:
             return horse_statue_shoe(command, player, world)
+    else:
+        print("Maybe you should look around the statue. What might the horse statue be seeking from you?")
     return True
 
+
 def horse_statue_shoe(command, player, world):
+    """Ask player for input to use the horse shoe, call horse_statue_read() once the correct item has been used.
+    Handle all other commands."""
+    print(player.x, player.y)
     print("Hmmm... the horse's front left foot doesn't look quite right. It's missing something.")
     while True:
         inp = input(">> ").strip().lower()
         if len(inp.split()) >= 2:
             do, item = inp.split(' ', 1)
             if do == 'use':
-                if item == 'nail shoe':
-                    if item in [i.lower() for i in player.inventory]:
-                        use_item(player, 'Nail Shoe')
-                        horse_statue_read(command, player, world)
-                    else:
-                        print("You don't have that item yet. Come back again when you have it.")
-                else:
-                    if item in [i.lower() for i in player.inventory]:
-                        print("This item cannot be used here.")
-                    else:
-                        print("You don't have that item.")
+                player.check_use_item(item, horse_statue_read, command, player, world)
         elif inp == "use":
             print("Use what?")
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            print(player.inventory)
+            player.show_inventory()
         elif inp.startswith("move"):
             print("Why would you want to move away? There is something interesting here.")
         else:
             print("You are not sure what to do with that.")
 
+
 def horse_statue_read(command, player, world):
+    """Ask player for the right command to inspect the letter and keep it, call horse_statue_go when completed.
+    Handle all other commands."""
     print("The horse's mouth opened up. Seems like something is in there.")
     while True:
         inp = input(">> ").strip().lower()
@@ -150,18 +168,21 @@ def horse_statue_read(command, player, world):
             while not inp.startswith('keep'):
                 print("THE LETTER MIGHT BE USEFUL LATER ON. YOU MIGHT WANT TO KEEP IT")
                 inp = input(">> ").strip().lower()
-            acquire(player, "letter")
+            player.acquire(letter)
             horse_statue_go(command, player, world)
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            print(player.inventory)
+            player.show_inventory()
         elif inp == "move":
             print("Why would you want to move away? There is something interesting here.")
         else:
             print("You are not sure what to do with that.")
 
+
 def horse_statue_go(command, player, world):
+    """Ask user for the correct command, print progress bar for riding the horse,
+    unlock and update new location as arrived. Print new location description. Handle all other commands."""
     print("Great! Now we have a letter. Oh wait.. The horse statue is moving!? To where? Let's mount on to see.")
     while True:
         inp = input(">> ").strip().lower()
@@ -176,12 +197,16 @@ def horse_statue_go(command, player, world):
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            print(player.inventory)
+            player.show_inventory()
         elif inp == "move":
             print("Why would you want to move away? There is something interesting here.")
         else:
             print("You are not sure what to do with that.")
+
+
 def handle_command(command, player, world):
+    """Handle the move commands between each location. Check move status and move player accordingly.
+    Call each location's handle function when current_location_index is updated. Handle all other commands."""
     current_location_index = world.map[player.x][player.y]
     command_parts = command.split()
     if len(command_parts) < 2 and 'move' in command_parts:
@@ -225,7 +250,6 @@ def handle_command(command, player, world):
     return True
 
 
-
 def print_progress_bar(word, duration=0.05, width=30):
     """Prints a simple progress bar in the console over a given duration of time."""
     for i in range(width + 1):
@@ -235,17 +259,6 @@ def print_progress_bar(word, duration=0.05, width=30):
         time.sleep(duration / width)
     print()
 
-
-def acquire(player, item):
-    """Acquire the item, or add the item to player's inventory"""
-    print(f" -- {item} has been acquired! Type 'inventory' to see. -- ")
-    player.inventory.append(item)
-
-
-def use_item(player, item):
-    """Use the item and remove it from the pleyer's inventory"""
-    print(f" -- {item} has been used. --")
-    player.inventory.remove(item)
 
 if __name__ == "__main__":
     world = World(open("map.txt"), open("locations.txt"), open("items.txt"))
@@ -262,7 +275,7 @@ if __name__ == "__main__":
     while not command.startswith('follow'):
         print("do you need TYPING LESSSONS")
         command = input(">> ").strip().lower()
-    #print_progress_bar('Following Squirel', duration=5, width=30)
+    # print_progress_bar('Following Squirel', duration=5, width=30)
     world.locations[1].unlock()  # Unlock room 1 for testing
     player.set_location(0, 1)
     print(world.get_location(player.x, player.y).long_description)
@@ -285,4 +298,4 @@ if __name__ == "__main__":
         elif command == 'item':
             print(world.get_location(player.x, player.y).items)
         elif command == 'inventory':
-            print(player.inventory)
+            player.show_inventory()

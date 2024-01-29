@@ -6,29 +6,26 @@ class Player:
     A Player in the text advanture game.
 
     Instance Attributes:
-        - # TODO
+        - # self.x: player's location (row) in relation to map.txt
+        - # self.y: player's location (column) in relation to map.txt
 
     Representation Invariants:
-        - # TODO
+        - # self.x <= 2
+        - # self.y <= 3
+        - # self.inventory == [] or all([type(item) == Item for item in self.inventory])
     """
 
     def __init__(self, x: int, y: int) -> None:
-        """
-        Initializes a new Player at position (x, y).
-        """
+        """ Initializes a new Player at position (x, y)."""
 
         self.x = x
         self.y = y
         self.inventory = []
         self.victory = False
 
-    # def move(self, direction: str, exits: dict):
-    #     if direction in exits:
-    #         new_x, new_y = exits[direction]
-    #         self.x, self.y = new_x, new_y
-    #     else:
-    #         print("You can't go that way.")
     def move(self, direction: str, world_map: list[list[int]]) -> (str, int, int):
+        """ Change player's location based on the input cardinal direction.
+        Return "valid" and new location if the move is valid, and return "invalid" and current location otherwise. """
         new_x, new_y = self.x, self.y
 
         if direction == 'north':
@@ -44,43 +41,66 @@ class Player:
             return ("valid", new_x, new_y)
         else:
             return ("invalid", self.x, self.y)
+
     def set_location(self, x: int, y: int):
+        """ set location of the player to the input location (x,y) in relation to the map in map.txt."""
         self.x = x
         self.y = y
 
-class Item:
-    def __init__(self, name: str, interactions: dict = None) -> None:
-        """Initialize a new item." ""
-        self.name = name
-        if interactions is None:
-            interactions = {}
-        self.interactions = interactions
-        pass
-        """
-        self.name = name
-        self.interactions = interactions
+    def acquire(self, item):
+        """Acquire the item, or add the item to player's inventory"""
+        print(f" -- {item.name} has been acquired! Type 'inventory' to see. -- ")
+        self.inventory.append(item)
 
-    def press(self):
-        """Perform an action with this item based on its type and the action provided."""
-        if self.name == "Vending Machine":
-            print("vending machine")
-            self.acorn_vending()
-        elif self.name == "Squirrel":
-            print("Ouch you cannot hurt the Squirrel")
-        else:
-            print(f"The action '{action}' is not available for {self.name}.")
-
-    def acorn_vending(self):
-        password = input('Press')
-        while password != 'abc':
-            password = input('put in pin pad')
-        print('successful')
-
-    def show_inventory(self, player: Player):
+    def show_inventory(self):
         """Show player's entire inventory."""
-        print("Inventory:")
-        for item in player.inventory:
-            print(f"- {item.name}: {item.description}")
+        if not self.inventory:
+            print("Your inventory is empty.")
+        else:
+            print("Inventory:")
+            for item in self.inventory:
+                print(f"- {item.name}")
+
+    def use_item(self, item):
+        """Use the item and remove it from the pleyer's inventory"""
+        print(f" -- {item.name} has been used. --")
+        self.inventory.remove(item)
+
+    def check_use_item(self, item: str, action: Optional = None, *args):
+        """Check if item can be used and use it if it is valid."""
+        items = [it for it in self.inventory if it.name.strip().lower() == item.strip().lower()]
+        if len(items) == 0:
+            print("You don't have that item.")
+        else:
+            item = items[0]
+            if item.in_location(self):
+                if item.in_inventory(self):
+                    self.use_item(item)
+                    if action:
+                        action(*args)
+                else:
+                    print("You don't have that item yet. Come back again when you have it.")
+            else:
+                if item.in_inventory(self):
+                    print("This item cannot be used here.")
+                else:
+                    print("You don't have that item.")
+
+
+class Item:
+    """ Item class that contains information about the item's name and its usable location."""
+    def __init__(self, name: str, usable_location: tuple[int, int] = None) -> None:
+        """Initialize a new item."""
+        self.name = name
+        self.usable_location = usable_location
+
+    def in_inventory(self, player: Player):
+        """check if the input item is in player's inventory"""
+        return self.name in [i.name for i in player.inventory]
+
+    def in_location(self, player: Player):
+        """checl if item is called to use in the correct location."""
+        return (player.x, player.y) == self.usable_location
 
     def next_painting(self, current: int = -1):
         """Move to the next paintings"""
