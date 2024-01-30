@@ -1,4 +1,5 @@
-0 Flower Pot
-1 Pen(?)
-2 Nemo
-3 Nemo
+1 2 Acorn
+1 3 Horse Shoe
+2 0 T-card
+3 0 Letter
+4 0 Pen

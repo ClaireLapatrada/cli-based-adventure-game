@@ -2,12 +2,6 @@
 import time
 from game_data2 import World, Item, Location, Player
 
-acorn = Item("Acorn", (0, 1))
-tcard = Item("T-card", (0, 1))
-letter = Item("Letter", (0, 2))
-horse_shoe = Item("Horse Shoe", (1, 2))
-pen = Item("Pen")
-
 
 # Location-1 (Vending) Helper Functions
 def handle_location1(command, player, world):
@@ -35,8 +29,8 @@ def passkey_vending(player, world):
             if code == "correct_code":  # Replace with the actual code
                 print("You hear a click sound as the next room is unlocked.")
                 world.locations[2].unlock()  # Assuming location 2 is the next one
-                player.acquire(acorn)
-                player.acquire(horse_shoe)
+                for item in world.get_location(player.x, player.y).items:
+                    player.acquire(item)
                 return True
             else:
                 print("Nothing happens. It seems to be the wrong code.")
@@ -134,14 +128,13 @@ def handle_location3(command, player, world):
 def horse_statue_shoe(command, player, world):
     """Ask player for input to use the horse shoe, call horse_statue_read() once the correct item has been used.
     Handle all other commands."""
-    print(player.x, player.y)
     print("Hmmm... the horse's front left foot doesn't look quite right. It's missing something.")
     while True:
         inp = input(">> ").strip().lower()
         if len(inp.split()) >= 2:
             do, item = inp.split(' ', 1)
             if do == 'use':
-                player.check_use_item(item, horse_statue_read, command, player, world)
+                player.check_use_item(item, 3, horse_statue_read, command, player, world)
         elif inp == "use":
             print("Use what?")
         elif inp == "quit":
@@ -168,7 +161,8 @@ def horse_statue_read(command, player, world):
             while not inp.startswith('keep'):
                 print("THE LETTER MIGHT BE USEFUL LATER ON. YOU MIGHT WANT TO KEEP IT")
                 inp = input(">> ").strip().lower()
-            player.acquire(letter)
+            for item in world.get_location(player.x, player.y).items:
+                player.acquire(item)
             horse_statue_go(command, player, world)
         elif inp == "quit":
             return False
@@ -296,6 +290,6 @@ if __name__ == "__main__":
             else:
                 print("There's nothing to look at here.")
         elif command == 'item':
-            print(world.get_location(player.x, player.y).items)
+            print([item.name for item in world.get_location(player.x, player.y).items])
         elif command == 'inventory':
             player.show_inventory()

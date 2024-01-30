@@ -66,14 +66,14 @@ class Player:
         print(f" -- {item.name} has been used. --")
         self.inventory.remove(item)
 
-    def check_use_item(self, item: str, action: Optional = None, *args):
+    def check_use_item(self, item: str, location_index: int, action: Optional = None, *args):
         """Check if item can be used and use it if it is valid."""
         items = [it for it in self.inventory if it.name.strip().lower() == item.strip().lower()]
         if len(items) == 0:
             print("You don't have that item.")
         else:
             item = items[0]
-            if item.in_location(self):
+            if item.in_location(self, location_index):
                 if item.in_inventory(self):
                     self.use_item(item)
                     if action:
@@ -89,7 +89,7 @@ class Player:
 
 class Item:
     """ Item class that contains information about the item's name and its usable location."""
-    def __init__(self, name: str, usable_location: tuple[int, int] = None) -> None:
+    def __init__(self, name: str, usable_location: int = None) -> None:
         """Initialize a new item."""
         self.name = name
         self.usable_location = usable_location
@@ -98,9 +98,9 @@ class Item:
         """check if the input item is in player's inventory"""
         return self.name in [i.name for i in player.inventory]
 
-    def in_location(self, player: Player):
+    def in_location(self, player: Player, loc_index: int):
         """checl if item is called to use in the correct location."""
-        return (player.x, player.y) == self.usable_location
+        return loc_index == self.usable_location
 
     def next_painting(self, current: int = -1):
         """Move to the next paintings"""
@@ -151,7 +151,9 @@ class Location:
         self.unlocked = unlocked
 
     def look(self):
+        """ print out the description of the location being looked at."""
         return self.description
+
     def add_item(self, item: Item):
         """Add an item to this location."""
         self.items.append(item)
@@ -162,19 +164,20 @@ class Location:
             print(item.name)
 
     def unlock(self):
+        """Change the status of the location unlock."""
         self.unlocked = True
+
 
 class World:
     """A text adventure game world storing all location, item and map data.
 
     Instance Attributes:
-        - map: a nested list representation of this world's map
-        - player:
-        - locations:
-        - item:
+        - self.map: a nested list representation of this world's map
+        - self.locations: a dictionary of location, in the order of how it should be visited.
 
     Representation Invariants:
-        - # TODO
+        - self.map != []
+        - TODO
     """
 
     def __init__(self, map_data: TextIO, location_data: TextIO, items_data: TextIO) -> None:
@@ -199,7 +202,7 @@ class World:
         self.locations = self.load_location(location_data)
         self.load_items(items_data)
 
-    #Required method
+    # Required method
     def load_map(self, map_data: TextIO) -> list[list[int]]:
         """
         Store map from open file map_data as the map attribute of this object, as a nested list of integers like so:
@@ -238,12 +241,11 @@ class World:
                 visited = False
                 unlocked = False
                 location = Location(brief_description, long_description, points, visited, unlocked)
-                locations_list[location_number] = (location)
+                locations_list[location_number] = location
 
             i += 1
 
         return locations_list
-
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
     def load_items(self, items_data: TextIO):
@@ -251,13 +253,15 @@ class World:
         for line in items_data:
             parts = line.strip().split()
             location_index = int(parts[0])
-            item_name = ' '.join(parts[1:])
+            usable_index = int(parts[1])
+            item_name = ' '.join(parts[2:])
 
             # Create the item (assuming you have a method to create items based on the name)
+            item = Item(item_name, usable_index)
 
             # Add the item to the respective location
             if location_index in self.locations:
-                self.locations[location_index].add_item(item_name)
+                self.locations[location_index].add_item(item)
 
     def get_location(self, x: int, y: int) -> Optional[Location]:
         """Return Location object associated with the coordinates (x, y) in the world map."""
