@@ -14,6 +14,13 @@ Welcome to the University of Toronto's St. George campus, where your wit is test
 - Hat tip to the UofT squirrels for inspiration 🐿️
 - Special thanks to the UofT for providing the ambiance and the labyrinthine layout necessary for a real adventure.
 
+## TODO
+- Code trading acorn to the squirrel for tcard
+- McLennan McLenjai code
+- MLC code
+- Exam code
+- Enhancement
+- .tex writing
 ## Getting Started 🚀
 
 Clone the repository and dare to face the ultimate academic trial:

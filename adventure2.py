@@ -4,19 +4,19 @@ from game_data2 import World, Item, Location, Player
 
 
 # Location-1 (Vending) Helper Functions
-def handle_location1(command, player, world):
+def handle_location1(com, pl, w):
     """Start location 1's events if it has not been cleared yet, else notify the player."""
-    if "vending" in command:
-        if world.locations[2].unlocked:
+    if "vending" in com:
+        if w.locations[2].unlocked:
             print("Vending Machine Puzzle has been solved. No other useful clues. ")
         else:
-            return passkey_vending(player, world)
+            return passkey_vending(pl, w)
     # else:
     #     print("Nothing interesting happens.")
     return True
 
 
-def passkey_vending(player, world):
+def passkey_vending(pl, w):
     """Ask player for input for the vending machine, drop item when the correct code has been input.
     Handle all other commands."""
     print("The vending machine has no slot for coins, only an alphanumeric keypad.")
@@ -28,9 +28,9 @@ def passkey_vending(player, world):
             code = input("Enter code: ").strip()
             if code == "correct_code":  # Replace with the actual code
                 print("You hear a click sound as the next room is unlocked.")
-                world.locations[2].unlock()  # Assuming location 2 is the next one
-                for item in world.get_location(player.x, player.y).items:
-                    player.acquire(item)
+                w.locations[2].unlock()  # Assuming location 2 is the next one
+                for item in w.get_location(pl.x, pl.y).items:
+                    pl.acquire(item)
                 return True
             else:
                 print("Nothing happens. It seems to be the wrong code.")
@@ -44,25 +44,25 @@ def passkey_vending(player, world):
 current_painting_index = 0
 
 
-def handle_location2(command, player, world):
+def handle_location2(com, w):
     """Start location 2's events if it has not been cleared yet, else notify the player."""
     global current_painting_index
 
-    if command == 'talk':
-        if world.locations[3].unlocked:
+    if com == 'talk':
+        if w.locations[3].unlocked:
             print("Talking with paintings won't solve more of your problems.")
         else:
-            return paintings_hint(player, world)
-    elif command == 'next':
+            return paintings_hint()
+    elif com == 'next':
         current_painting_index += 1
-        return paintings_hint(player, world)
+        return paintings_hint()
     # else:
     #     print("You can't do that here.")
 
     return True
 
 
-def paintings_hint(player, world):
+def paintings_hint():
     """move to the next painting and call the door puzzle onve all paintings have been visited.
     Handle all other commands."""
     global current_painting_index
@@ -79,11 +79,11 @@ def paintings_hint(player, world):
         print(paintings[current_painting_index])
     else:
         # Once all paintings have been viewed, prompt the door puzzle
-        return door_puzzle(player, world)
+        return door_puzzle()
     return True
 
 
-def door_puzzle(player, world):
+def door_puzzle():
     """Ask user for input to the door puzzle, with animation when revealing the correct code.
     Handle all other commands."""
     solution = "secret"
@@ -113,19 +113,19 @@ def door_puzzle(player, world):
 
 
 # Location 3 - (Horse Statue)
-def handle_location3(command, player, world):
+def handle_location3(com, pl, w):
     """Start location 3 events if it has not been cleared yet, else notify the player."""
-    if command == 'look':
-        if world.locations[4].unlocked:
+    if com == 'look':
+        if w.locations[4].unlocked:
             print("The horse isn't here anymore.")
         else:
-            return horse_statue_shoe(command, player, world)
+            return horse_statue_shoe(com, pl, w)
     else:
         print("Maybe you should look around the statue. What might the horse statue be seeking from you?")
     return True
 
 
-def horse_statue_shoe(command, player, world):
+def horse_statue_shoe(com, pl, w):
     """Ask player for input to use the horse shoe, call horse_statue_read() once the correct item has been used.
     Handle all other commands."""
     print("Hmmm... the horse's front left foot doesn't look quite right. It's missing something.")
@@ -134,20 +134,20 @@ def horse_statue_shoe(command, player, world):
         if len(inp.split()) >= 2:
             do, item = inp.split(' ', 1)
             if do == 'use':
-                player.check_use_item(item, 3, horse_statue_read, command, player, world)
+                pl.check_use_item(item, 3, horse_statue_read, com, pl, w)
         elif inp == "use":
             print("Use what?")
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            player.show_inventory()
+            pl.show_inventory()
         elif inp.startswith("move"):
             print("Why would you want to move away? There is something interesting here.")
         else:
             print("You are not sure what to do with that.")
 
 
-def horse_statue_read(command, player, world):
+def horse_statue_read(com, pl, w):
     """Ask player for the right command to inspect the letter and keep it, call horse_statue_go when completed.
     Handle all other commands."""
     print("The horse's mouth opened up. Seems like something is in there.")
@@ -161,63 +161,63 @@ def horse_statue_read(command, player, world):
             while not inp.startswith('keep'):
                 print("THE LETTER MIGHT BE USEFUL LATER ON. YOU MIGHT WANT TO KEEP IT")
                 inp = input(">> ").strip().lower()
-            for item in world.get_location(player.x, player.y).items:
-                player.acquire(item)
-            horse_statue_go(command, player, world)
+            for item in w.get_location(pl.x, pl.y).items:
+                pl.acquire(item)
+            horse_statue_go(com, pl)
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            player.show_inventory()
+            pl.show_inventory()
         elif inp == "move":
             print("Why would you want to move away? There is something interesting here.")
         else:
             print("You are not sure what to do with that.")
 
 
-def horse_statue_go(command, player, world):
+def horse_statue_go(pl, w):
     """Ask user for the correct command, print progress bar for riding the horse,
     unlock and update new location as arrived. Print new location description. Handle all other commands."""
     print("Great! Now we have a letter. Oh wait.. The horse statue is moving!? To where? Let's mount on to see.")
     while True:
         inp = input(">> ").strip().lower()
         if inp == 'mount':
-            world.locations[4].unlock()
+            w.locations[4].unlock()
             print("weeeee let's go!")
             print_progress_bar("riding the horse", duration=5, width=30)
-            location_index = world.map[2][0]
-            new_location = world.locations[location_index]
-            player.x, player.y = 2, 0
+            location_index = w.map[2][0]
+            new_location = w.locations[location_index]
+            pl.x, pl.y = 2, 0
             print(new_location.long_description)
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            player.show_inventory()
+            pl.show_inventory()
         elif inp == "move":
             print("Why would you want to move away? There is something interesting here.")
         else:
             print("You are not sure what to do with that.")
 
 
-def handle_command(command, player, world):
+def handle_command(com, pl, w):
     """Handle the move commands between each location. Check move status and move player accordingly.
     Call each location's handle function when current_location_index is updated. Handle all other commands."""
-    current_location_index = world.map[player.x][player.y]
-    command_parts = command.split()
+    current_location_index = w.map[pl.x][pl.y]
+    command_parts = com.split()
     if len(command_parts) < 2 and 'move' in command_parts:
         print("Please specify a direction to move. Example: 'move north'")
         return True
-    if command.startswith('move'):
-        _, direction = command.split()
+    if com.startswith('move'):
+        _, direction = com.split()
         if direction.lower() not in ['north', 'south', 'east', 'west']:
             print("Please specify a direction to move. Example: 'move north'")
             return True
-        move_status, new_x, new_y = player.move(direction, world.map)
+        move_status, new_x, new_y = pl.move(direction, w.map)
 
         if move_status == "valid":
-            location_index = world.map[new_x][new_y]
-            new_location = world.locations[location_index]
+            location_index = w.map[new_x][new_y]
+            new_location = w.locations[location_index]
             if new_location.unlocked:
-                player.x, player.y = new_x, new_y
+                pl.x, pl.y = new_x, new_y
                 print(new_location.long_description)
             else:
                 print("This location is locked. You can't enter yet.")
@@ -231,13 +231,13 @@ def handle_command(command, player, world):
 
     if current_location_index == 1:
         # Special handling for location 1
-        return handle_location1(command, player, world)
+        return handle_location1(com, pl, w)
 
     if current_location_index == 2:
-        return handle_location2(command, player, world)
+        return handle_location2(com, pl)
 
     if current_location_index == 3:
-        return handle_location3(command, player, world)
+        return handle_location3(com, pl, w)
 
     # if current_location_index == 4:
     #     return handle_location4(command, player, world)
@@ -249,7 +249,7 @@ def print_progress_bar(word, duration=0.05, width=30):
     for i in range(width + 1):
         percent = (i / width) * 100
         bar = '#' * i + '-' * (width - i)
-        print(f"\r{word}: [{bar}] {percent:.2f}%", end="")
+        print(f"\r{word}: [{bar}] {percent: .2f}%", end="")
         time.sleep(duration / width)
     print()
 
