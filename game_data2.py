@@ -1,5 +1,5 @@
 from typing import Optional, TextIO, Dict, List
-
+import random
 
 class Player:
     """
@@ -21,6 +21,7 @@ class Player:
         self.x = x
         self.y = y
         self.inventory = []
+        self.tbucks = 0
         self.victory = False
 
     def move(self, direction: str, world_map: list[list[int]]) -> (str, int, int):
@@ -201,6 +202,7 @@ class World:
         self.map = self.load_map(map_data)
         self.locations = self.load_location(location_data)
         self.load_items(items_data)
+        self.new_game = True
 
     # Required method
     def load_map(self, map_data: TextIO) -> list[list[int]]:
@@ -270,3 +272,24 @@ class World:
             if location_index != -1:
                 return self.locations[location_index]
         return None
+
+
+#Librarian Class to Inherit from Player
+class Librarian(Player):
+    def __init__(self, x: int, y: int, name: str, trade_items: list):
+        super().__init__(x, y)
+        self.name = name
+        self.trade_items = trade_items
+        #self.spawn_locations = random.sample(range(2, 7), 3)  # Randomly selects 3 rooms to spawn
+        self.spawn_locations = [1, 2, 3]
+        self.spawned_locations = []  # Tracks locations where the NPC has already spawned
+
+    def check_spawn(self, player_location: tuple):
+        """ Check and handle spawning of the NPC at the player's current location. """
+        #print(f"Checking Librarian spawn at {player_location}. Spawn locations are {self.spawn_locations}")
+        if player_location in self.spawn_locations and player_location not in self.spawned_locations:
+            self.x, self.y = player_location  # Set NPC location to player location
+            self.spawned_locations.append(player_location)
+            print(f"A Librarian has spawned at location {player_location}... ")
+            return True
+        return False

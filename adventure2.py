@@ -1,7 +1,18 @@
 """The main adventure.py file. Click run on this file to start the game. """
 import time
-from game_data2 import World, Item, Location, Player
+from game_data2 import World, Item, Location, Player, Librarian
+import json
 
+def handle_location0(com, pl, w):
+    print("You wake up in your room and see a squirrel outside your window...")
+    print("type 'follow squirrel'")
+    com = input(">> ").strip().lower()
+    while not com.startswith('follow'):
+        print("do you need TYPING LESSSONS")
+        com = input(">> ").strip().lower()
+    w.locations[1].unlock()
+    player.set_location(0, 1)
+    return True
 
 # Location-1 (Vending) Helper Functions
 def handle_location1(com, pl, w):
@@ -44,7 +55,7 @@ def passkey_vending(pl, w):
 current_painting_index = 0
 
 
-def handle_location2(com, w):
+def handle_location2(com, pl, w):
     """Start location 2's events if it has not been cleared yet, else notify the player."""
     global current_painting_index
 
@@ -114,13 +125,14 @@ def door_puzzle():
 
 # Location 3 - (Horse Statue)
 def handle_location3(com, pl, w):
+    command_specific = ['trade']
     """Start location 3 events if it has not been cleared yet, else notify the player."""
     if com == 'look':
         if w.locations[4].unlocked:
             print("The horse isn't here anymore.")
         else:
             return horse_statue_shoe(com, pl, w)
-    else:
+    elif command not in command_specific:
         print("Maybe you should look around the statue. What might the horse statue be seeking from you?")
     return True
 
@@ -163,7 +175,7 @@ def horse_statue_read(com, pl, w):
                 inp = input(">> ").strip().lower()
             for item in w.get_location(pl.x, pl.y).items:
                 pl.acquire(item)
-            horse_statue_go(com, pl)
+            horse_statue_go(com, pl, w)
         elif inp == "quit":
             return False
         elif inp == "inventory":
@@ -174,7 +186,7 @@ def horse_statue_read(com, pl, w):
             print("You are not sure what to do with that.")
 
 
-def horse_statue_go(pl, w):
+def horse_statue_go(com, pl, w):
     """Ask user for the correct command, print progress bar for riding the horse,
     unlock and update new location as arrived. Print new location description. Handle all other commands."""
     print("Great! Now we have a letter. Oh wait.. The horse statue is moving!? To where? Let's mount on to see.")
@@ -197,11 +209,62 @@ def horse_statue_go(pl, w):
         else:
             print("You are not sure what to do with that.")
 
+def handle_librarian_interaction(com, pl, librarian, w):
+    #print("you're in a territory with a librarian that can trade with you")
+    if com.startswith('loot'):
+        # Example trade logic
+        print("Trade begins: use command like\n"
+              "[trade: trade unused item for Tbucks, drop: to drop items, bargain: to ask nicely for MORE Tbucks]\n"
+              "[pity: leave the poor librian alon WARNING: you cannot loot this poor soul again")
+    while True:
+        user_input = input(">> ").strip().lower()
+        if user_input == 'trade':
+            print("trade logic #TODO")
+        elif user_input.startswith('drop'):
+            print("drop logic #TODO")
+        elif user_input.startswith('bargain'):
+            player.tbucks += 1
+            print(player.tbucks)
+        elif user_input.startswith('pity'):
+            print("Libraian: Phew! Thank you for leaving me alone")
+            time.sleep(0.02)
+            print("Type 'look' to keep exploring the room")
+            return False
 
-def handle_command(com, pl, w):
+
+    # Add more interaction types as needed
+    #
+    # while True:
+    #     print("\nYou stand before a door with no handles, only a panel with letters.")
+    #     print("_ _ _ _ _ _")
+    #     user_input = input(">> ").strip().lower()
+    #
+    #     # Animation for revealing each letter
+    #     display = ['_', '_', '_', '_', '_', '_']
+    #     for i, char in enumerate(user_input):
+    #         if i < len(display):
+    #             display[i] = char
+    #             print("\r" + " ".join(display), end="")
+    #             time.sleep(0.5)
+    #
+    #     # Check the solution after the animation
+    #     if user_input == solution:
+    #         print("\nThe door clicks open, revealing a new path ahead.")
+    #         world.locations[3].unlock()
+    #         return True
+    #     elif user_input == "quit":
+    #         print("\nQuitting the puzzle.")
+    #         return False
+    #     else:
+    #         print("\nNothing happens. Perhaps the clues in the paintings can help.")
+
+
+def handle_command(com, pl, w, librarian):
     """Handle the move commands between each location. Check move status and move player accordingly.
     Call each location's handle function when current_location_index is updated. Handle all other commands."""
     current_location_index = w.map[pl.x][pl.y]
+    librarian.check_spawn((pl.x, pl.y))
+
     command_parts = com.split()
     if len(command_parts) < 2 and 'move' in command_parts:
         print("Please specify a direction to move. Example: 'move north'")
@@ -215,26 +278,47 @@ def handle_command(com, pl, w):
 
         if move_status == "valid":
             location_index = w.map[new_x][new_y]
+
             new_location = w.locations[location_index]
             if new_location.unlocked:
                 pl.x, pl.y = new_x, new_y
                 print(new_location.long_description)
+                if current_location_index in librarian.spawn_locations:
+                    print("You're in a territory where a librarian can interact with you.")
             else:
                 print("This location is locked. You can't enter yet.")
         else:
             print("You can't go that way or it's out of bounds.")
 
     elif command == 'quit':
+        quit_game = input('Do you want to save your game? [y/n]')
+        if quit_game == 'y':
+            save_game(player, world)
+        else:
+            print("Game will not be saved.")
         return False  # Signal to exit the game loop
+
     elif command == 'help':
         print("Available commands: move [direction], quit, help, look, press")
+    lib_index = w.map[pl.x][pl.y]
+    librarian_present = lib_index in librarian.spawn_locations
+    # Prioritize librarian interactions if present
+
+    if librarian_present:
+        if com.startswith('loot'):
+            print("loot librarian")
+            handle_librarian_interaction(com, pl, librarian, w)
+            return True
+
+    if current_location_index == 0:
+        return handle_location0(com, pl, w)
 
     if current_location_index == 1:
         # Special handling for location 1
         return handle_location1(com, pl, w)
 
     if current_location_index == 2:
-        return handle_location2(com, pl)
+        return handle_location2(com, pl, w)
 
     if current_location_index == 3:
         return handle_location3(com, pl, w)
@@ -254,36 +338,66 @@ def print_progress_bar(word, duration=0.05, width=30):
     print()
 
 
+def save_game(player, world, file_name='savegame.txt'):
+    save_data = {
+        'player_x': player.x,
+        'player_y': player.y,
+        'player_inventory': [item.name for item in player.inventory],
+        'visited_locations': {loc_id: loc.visited for loc_id, loc in world.locations.items() if loc_id != -1}
+    }
+    with open(file_name, 'w') as file:
+        json.dump(save_data, file)
+    print("Game saved.")
+
+
+def load_game(player, world, file_name='savegame.txt'):
+    with open(file_name, 'r') as file:
+        save_data = json.load(file)
+
+    player.x = save_data['player_x']
+    player.y = save_data['player_y']
+    player.inventory = [Item(name) for name in save_data['player_inventory']]
+    world.new_game = False
+
+    for loc_id, visited in save_data['visited_locations'].items():
+        if loc_id in world.locations:  # Only update if the location exists
+            world.locations[loc_id].visited = visited
+    print("Game loaded.")
+
+
 if __name__ == "__main__":
     world = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     player = Player(0, 0)
+    librarian = Librarian(0, 0, "Librarian", ["book", "scroll"])
+    print(librarian.spawn_locations)
+    #new code
+
+    start_choice = input("Do you want to 'start' a new game or 'load' saved game? ")
+    if start_choice == 'load':
+        try:
+            load_game(player, world)
+        except FileNotFoundError:
+            print("No saved game found. Starting a new game.")
+    if world.new_game == True:
+        print("Welcome to the Text Adventure Game!")
+        print("Rules and Regulations")
+    else:
+        print("Welcome BACK to Text Adventure Game!")
+        print("same rules apply")
 
     s_short = 0.25
-    print("Welcome to the Text Adventure Game!")
-    print("Rules and Regulations")
     time.sleep(s_short)
-
-    print("You wake up in your room and see a squirrel outside your window...")
-    print("type 'follow squirrel'")
-    command = input(">> ").strip().lower()
-    while not command.startswith('follow'):
-        print("do you need TYPING LESSSONS")
-        command = input(">> ").strip().lower()
+    player.set_location(0, 0)
     # print_progress_bar('Following Squirel', duration=5, width=30)
     world.locations[1].unlock()  # Unlock room 1 for testing
-    player.set_location(0, 1)
-    print(world.get_location(player.x, player.y).long_description)
+    world.locations[2].unlock()
+    player.set_location(0, 2)
+    #print(world.get_location(player.x, player.y).long_description)
     continue_game = True
     while continue_game:
         current_location = world.get_location(player.x, player.y)
-        # if current_location:
-        #     print(current_location.long_description)
-        # else:
-        #     print("You are in an unknown location.")
-
         command = input(">> ").strip().lower()
-        continue_game = handle_command(command, player, world)
-
+        continue_game = handle_command(command, player, world, librarian)
         if command == 'look':
             if current_location:
                 print(current_location.look())

@@ -47,3 +47,17 @@ You are at the infamous McLennan Physics Lab.
 You are at mclennan mcdonald mclen(gub)jai a
 pppppp
 pppppppppppp
+END
+
+LOCATION 5
+0
+Sid Smith Cafeteria
+Sid Smith Caesar Sald
+pppp
+END
+
+LOCAATION 6
+0
+You are at MLC
+MLC has a TA
+END
