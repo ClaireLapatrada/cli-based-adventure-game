@@ -191,7 +191,6 @@ def horse_statue_shoe(com, pl, w):
             if do == 'use':
                 while not used:
                     used = player.check_use_item(item, 3, horse_statue_read, com, pl, w)
-                    print(used)
                     if used:
                         return True
                     else:

@@ -76,7 +76,6 @@ class Player:
 
     def check_use_item(self, item: str, location_index: int, action: Optional = None, *args):
         """Check if item can be used and use it if it is valid."""
-        print('check use item running')
 
         items = [it for it in self.inventory if it.name.strip().lower() == item.strip().lower()]
         if len(items) == 0:
