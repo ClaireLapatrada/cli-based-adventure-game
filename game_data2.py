@@ -67,6 +67,10 @@ class Player:
         print(f" -- {item.name} has been used. --")
         self.inventory.remove(item)
 
+    def remove_item(self, item):
+        print(f"{item.name} has been dropped")
+        self.inventory.remove(item)
+
     def check_use_item(self, item: str, location_index: int, action: Optional = None, *args):
         """Check if item can be used and use it if it is valid."""
         items = [it for it in self.inventory if it.name.strip().lower() == item.strip().lower()]
@@ -90,23 +94,21 @@ class Player:
 
 class Item:
     """ Item class that contains information about the item's name and its usable location."""
-    def __init__(self, name: str, usable_location: int = None) -> None:
+    def __init__(self, name: str, worth: int, usable_location: int = None) -> None:
         """Initialize a new item."""
         self.name = name
+        self.worth = worth
         self.usable_location = usable_location
+
 
     def in_inventory(self, player: Player):
         """check if the input item is in player's inventory"""
         return self.name in [i.name for i in player.inventory]
 
     def in_location(self, player: Player, loc_index: int):
-        """checl if item is called to use in the correct location."""
+        """check if item is called to use in the correct location."""
         return loc_index == self.usable_location
 
-    def next_painting(self, current: int = -1):
-        """Move to the next paintings"""
-        paintings = ["Painting 1 Clue", "Painting 2 Clue", "Painting 3 Clue", "Painting 4 Clue", "Painting 5 Clue"]
-        print(paintings[current + 1])
 
 
 squirrel_interactions = {
@@ -256,10 +258,11 @@ class World:
             parts = line.strip().split()
             location_index = int(parts[0])
             usable_index = int(parts[1])
-            item_name = ' '.join(parts[2:])
+            item_value = int(parts[2])
+            item_name = ' '.join(parts[3:])
 
             # Create the item (assuming you have a method to create items based on the name)
-            item = Item(item_name, usable_index)
+            item = Item(item_name, item_value, usable_index)
 
             # Add the item to the respective location
             if location_index in self.locations:
@@ -293,3 +296,14 @@ class Librarian(Player):
             print(f"A Librarian has spawned at location {player_location}... ")
             return True
         return False
+
+    def trade_for_bucks(self, player, item):
+        items = [it for it in player.inventory if it.name.strip().lower() == item.strip().lower()]
+        if len(items) == 0:
+            print("You don't have that item.")
+        else:
+            item = items[0]
+            player.tbucks += item.worth
+            player.remove_item(item)
+            print(f"{item.name} has been traded | Tbucks balance increased by {item.worth}")
+
