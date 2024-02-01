@@ -15,6 +15,7 @@ Welcome to the University of Toronto's St. George campus, where your wit is test
 - Special thanks to the UofT for providing the ambiance and the labyrinthine layout necessary for a real adventure.
 
 ## TODO
+- customize 'help' for each location
 - Code trading acorn to the squirrel for tcard (sed la)
 - McLennan McLenjai code
 - MLC code
@@ -24,7 +25,6 @@ Welcome to the University of Toronto's St. George campus, where your wit is test
 
 ## ANNOYING ERROS
 - it keeps printing fucking descriptions of the room
-- your horse, does not exit the loop something about the 300 while loops just
 - some designs are very stuck
 ## Getting Started 🚀
 

@@ -3,19 +3,28 @@ import time
 from game_data2 import World, Item, Location, Player, Librarian
 import json
 
+
 def handle_location0(com, pl, w):
+    """Start location 0's events if it has not been cleared yet, else notify the player."""
     print("You wake up in your room and see a squirrel outside your window...")
     print("type 'follow squirrel'")
     com = input(">> ").strip().lower()
     while not com.startswith('follow'):
         print("do you need TYPING LESSSONS")
         com = input(">> ").strip().lower()
+    print_progress_bar('Following Squirel', duration=3, width=30)
     w.locations[1].unlock()
+    location_index = w.map[0][1]
+    new_location = w.locations[location_index]
     player.set_location(0, 1)
+    print(new_location.long_description)
     return True
+
 
 # Location-1 (Vending) Helper Functions
 def handle_location1(com, pl, w):
+    """Start location 1's events if it has not been cleared yet, else notify the player."""
+    global traded
     # Ensure the player interacts with the vending machine first
     # Handle the vending machine puzzle
     if not w.locations[2].unlocked:
@@ -41,23 +50,28 @@ def handle_location1(com, pl, w):
     squirrel.trade_items = ['Tcard', 'Chocolate']
 
     # Trade interaction loop
-    traded = False  # Flag to check if trade was successful
     while not traded:
         inp = input(">> ").strip().lower()
         if inp.startswith('trade '):
             _, item = inp.split(' ', 1)
             if item.lower() == 'acorn' and 'Acorn' in [item.name for item in pl.inventory]:
+                pl.check_use_item(item, 1)
                 pl.acquire(Item('Tcard', -1, 8))  # Simulate acquiring TCard
                 print("You traded an acorn for the Tcard. The squirrel scampers away happily.")
                 w.locations[2].unlock()  # Unlock next location
                 traded = True  # Set the flag to True to exit loop
             else:
                 print(f"The squirrel doesn't seem interested in {item}. Try trading something else.")
+        elif inp == "quit":
+            return False
+        elif inp == "inventory":
+            pl.show_inventory()
         else:
             print("To trade with the squirrel, type 'trade [item]'.")
 
     exit = ""
     return traded  # Return the status of the trade
+
 
 def passkey_vending(pl, w):
     """Ask player for input for the vending machine, drop item when the correct code has been input.
@@ -71,7 +85,7 @@ def passkey_vending(pl, w):
             code = input("Enter code: ").strip()
             if code == "correct_code":  # Replace with the actual code
                 print("You hear a click sound as the next room is unlocked.")
-                  # Assuming location 2 is the next one
+                # Assuming location 2 is the next one
                 for item in w.get_location(pl.x, pl.y).items:
                     pl.acquire(item)
                 return True
@@ -81,7 +95,6 @@ def passkey_vending(pl, w):
             return False
         else:
             print("You are not sure what to do with that.")
-
 
 
 # Location 2 - (Hallway with Painting)
@@ -153,36 +166,43 @@ def door_puzzle():
             return False
         else:
             print("\nNothing happens. Perhaps the clues in the paintings can help.")
-# Location 3 - (Horse Statue)
+
+
 # Location 3 - (Horse Statue)
 def handle_location3(com, pl, w):
     """Start location 3 events if it has not been cleared yet, else notify the player."""
-    if com == 'look':
+    if com == 'inspect':
         if w.locations[4].unlocked:
             print("The horse isn't here anymore.")
         else:
+            print("Hmmm... the horse's front left foot doesn't look quite right. It's missing something.")
             return horse_statue_shoe(com, pl, w)
-    else:
-        print("Maybe you should look around the statue. What might the horse statue be seeking from you?")
     return True
 
 
 def horse_statue_shoe(com, pl, w):
     """Ask player for input to use the horse shoe, call horse_statue_read() once the correct item has been used.
     Handle all other commands."""
-    print("Hmmm... the horse's front left foot doesn't look quite right. It's missing something.")
-    while True:
+    global used
+    while not used:
         inp = input(">> ").strip().lower()
         if len(inp.split()) >= 2:
             do, item = inp.split(' ', 1)
             if do == 'use':
-                pl.check_use_item(item, 3, horse_statue_read, com, pl, w)
+                while not used:
+                    used = player.check_use_item(item, 3, horse_statue_read, com, pl, w)
+                    print(used)
+                    if used:
+                        return True
+                    else:
+                        horse_statue_shoe(command, player, world)
+                return True
         elif inp == "use":
             print("Use what?")
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            pl.show_inventory()
+            player.show_inventory()
         elif inp.startswith("move"):
             print("Why would you want to move away? There is something interesting here.")
         else:
@@ -203,14 +223,16 @@ def horse_statue_read(com, pl, w):
             while not inp.startswith('keep'):
                 print("THE LETTER MIGHT BE USEFUL LATER ON. YOU MIGHT WANT TO KEEP IT")
                 inp = input(">> ").strip().lower()
-            for item in w.get_location(pl.x, pl.y).items:
-                pl.acquire(item)
-            horse_statue_go(com, pl, w)
+            for item in world.get_location(player.x, player.y).items:
+                player.acquire(item)
+            return horse_statue_go(command, player, world)
+            # horse_statue_go(com, pl, w)
+            # return True
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            pl.show_inventory()
-        elif inp == "move":
+            player.show_inventory()
+        elif inp.startswith("move"):
             print("Why would you want to move away? There is something interesting here.")
         else:
             print("You are not sure what to do with that.")
@@ -223,33 +245,36 @@ def horse_statue_go(com, pl, w):
     while True:
         inp = input(">> ").strip().lower()
         if inp == 'mount':
-            w.locations[4].unlock()
+            world.locations[4].unlock()
             print("weeeee let's go!")
             print_progress_bar("riding the horse", duration=5, width=30)
-            # location_index = w.map[2][0]
-            # new_location = w.locations[location_index]
-            # player.x, player.y = 2, 0
+            location_index = world.map[2][0]
+            new_location = world.locations[location_index]
             player.set_location(2, 0)
-            # print(new_location.long_description)
-            return False
+            print(new_location.long_description)
+            return True
         elif inp == "quit":
             return False
         elif inp == "inventory":
-            pl.show_inventory()
-        elif inp == "move":
+            player.show_inventory()
+        elif inp.startswith("move"):
             print("Why would you want to move away? There is something interesting here.")
         else:
             print("You are not sure what to do with that.")
-#TODO
+
+
+# TODO
 def handle_location4(com, pl, w):
+    """Start location 4 events if it has not been cleared yet, else notify the player."""
     print("McLennan Greetings. ")
-    w.locations[5].unlock() #testing
+    w.locations[5].unlock()  # testing
     return True
 
 
 def handle_location5(com, pl, w):
-    print(
-        "You're in Sid Smith, everything is closed except for a shop called 'TwoGreens'. What a weird name, but you need your calories.")
+    """Start location 5 events if it has not been cleared yet, else notify the player."""
+    print("You're in Sid Smith, everything is closed except for a shop called 'TwoGreens'. "
+          "What a weird name, but you need your calories.")
 
     # Initialize caesar to False
     caesar = False
@@ -264,7 +289,8 @@ def handle_location5(com, pl, w):
             print("That's not a valid choice, please choose from the menu.")
         else:
             print("Are you really a CS major?? Caesar always #chr(ord(m)-k)) forever.")
-            # If you want to give the user another chance regardless of their choice, you could remove the 'caesar = True' or adjust the logic accordingly.
+            # If you want to give the user another chance regardless of their choice,
+            # you could remove the 'caesar = True' or adjust the logic accordingly.
             # If the purpose is to keep asking until Caesar salad is selected, then the code is fine.
             # Otherwise, to proceed with any valid choice, you could set 'caesar = True' here as well.
 
@@ -294,6 +320,7 @@ def handle_location5(com, pl, w):
 
 
 def puzzle_caesar_salad(pl, w):
+    """Activate the Caesar Salad puzzle, wait until player input the right answer."""
     print("The engraving 'KJA' seems to be a hint. It's followed by '+ 2'. Hmm, a Caesar cipher perhaps?")
 
     # Correct solution according to the Caesar cipher hint
@@ -325,8 +352,10 @@ def puzzle_caesar_salad(pl, w):
         else:
             print("\nNothing happens. Perhaps the clues in the paintings can help.")
 
+
 def handle_librarian_interaction(com, pl, librarian, w):
-    #print("you're in a territory with a librarian that can trade with you")
+    """ handle any interaction with the librarian. """
+    # print("you're in a territory with a librarian that can trade with you")
     if com.startswith('loot'):
         # Example trade logic
         print("Trade begins: use command like\n"
@@ -357,15 +386,13 @@ def handle_command(com, pl, w, librarian):
     Call each location's handle function when current_location_index is updated. Handle all other commands."""
     current_location_index = w.map[pl.x][pl.y]
     librarian.check_spawn((pl.x, pl.y))
-    command_parts = com.split()
-
-
+    command_parts = command.split()
 
     if len(command_parts) < 2 and 'move' in command_parts:
         print("Please specify a direction to move. Example: 'move north'")
         return True
-    if com.startswith('move'):
-        _, direction = com.split()
+    if command.startswith('move'):
+        _, direction = command.split()
         if direction.lower() not in ['north', 'south', 'east', 'west']:
             print("Please specify a direction to move. Example: 'move north'")
         else:
@@ -401,22 +428,25 @@ def handle_command(com, pl, w, librarian):
     # Prioritize librarian interactions if present
 
     if librarian_present:
-        if com.startswith('loot'):
+        if command.startswith('loot'):
             print("loot librarian")
-            handle_librarian_interaction(com, pl, librarian, w)
+            handle_librarian_interaction(command, pl, librarian, w)
             return True
 
     if current_location_index == 0:
-        return handle_location0(com, pl, w)
+        return handle_location0(command, player, world)
 
     if current_location_index == 1:
-        return handle_location1(com, pl, w)
+        return handle_location1(command, player, world)
 
     if current_location_index == 2:
-        return handle_location2(com, pl, w)
+        return handle_location2(command, player, world)
 
     if current_location_index == 3:
-        return handle_location3(com, pl, w)
+        return handle_location3(command, player, world)
+
+    if current_location_index == 4:
+        return handle_location4(command, player, world)
 
     if current_location_index == 5:
         return handle_location5(command, player, world)
@@ -435,6 +465,7 @@ def print_progress_bar(word, duration=0.05, width=30):
 
 
 def save_game(player, world, file_name='savegame.txt'):
+    """Save current game data in a file with the given filename."""
     save_data = {
         'player_x': player.x,
         'player_y': player.y,
@@ -447,6 +478,7 @@ def save_game(player, world, file_name='savegame.txt'):
 
 
 def load_game(player, world, file_name='savegame.txt'):
+    """Load game from savegame.txt"""
     with open(file_name, 'r') as file:
         save_data = json.load(file)
 
@@ -466,7 +498,11 @@ if __name__ == "__main__":
     player = Player(0, 0)
     librarian = Librarian(0, 0, "Librarian", ["book", "scroll"])
     print(librarian.spawn_locations)
-    #new code
+    # Set up
+    traded = False  # Flag to check if trade was successful
+    used = False
+
+    # new code
 
     start_choice = input("Do you want to 'start' a new game or 'load' saved game? ")
     if start_choice == 'load':
@@ -474,7 +510,7 @@ if __name__ == "__main__":
             load_game(player, world)
         except FileNotFoundError:
             print("No saved game found. Starting a new game.")
-    if world.new_game == True:
+    if world.new_game:
         print("Welcome to the Text Adventure Game!")
         print("Rules and Regulations")
     else:
@@ -485,17 +521,20 @@ if __name__ == "__main__":
     time.sleep(s_short)
     player.set_location(0, 0)
     # print_progress_bar('Following Squirel', duration=5, width=30)
-    # world.locations[1].unlock()  # Unlock room 1 for testing
     # world.locations[2].unlock()
     # player.set_location(0, 2)
-    #print(world.get_location(player.x, player.y).long_description)
+    print(world.get_location(player.x, player.y).long_description)
 
-    #Testing Librian Trade
-    world.locations[5].unlock()
-    player.set_location(1, 0)
-    print(player.x)
-    print(world.map[player.x][player.y])
-    print(world.map)
+    # Test Location
+    # world.locations[4].unlock()
+    # player.set_location(2, 0)
+
+    # Testing Librian Trade
+    # world.locations[5].unlock()
+    # player.set_location(1, 0)
+    # print(player.x)
+    # print(world.map[player.x][player.y])
+    # print(world.map)
     # world.locations[2].unlock()
     # player.set_location(0, 2)
     # player.inventory +=

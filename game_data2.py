@@ -1,5 +1,7 @@
+""" game_data2.py """
 from typing import Optional, TextIO, Dict, List
 import random
+
 
 class Player:
     """
@@ -63,19 +65,23 @@ class Player:
                 print(f"- {item.name}")
 
     def use_item(self, item):
-        """Use the item and remove it from the pleyer's inventory"""
+        """Use the item and remove it from the player's inventory"""
         print(f" -- {item.name} has been used. --")
         self.inventory.remove(item)
 
     def remove_item(self, item):
+        """ print the item that is dropped and remove it from player's inventory"""
         print(f"{item.name} has been dropped")
         self.inventory.remove(item)
 
     def check_use_item(self, item: str, location_index: int, action: Optional = None, *args):
         """Check if item can be used and use it if it is valid."""
+        print('check use item running')
+
         items = [it for it in self.inventory if it.name.strip().lower() == item.strip().lower()]
         if len(items) == 0:
             print("You don't have that item.")
+            return False
         else:
             item = items[0]
             if item.in_location(self, location_index):
@@ -83,13 +89,17 @@ class Player:
                     self.use_item(item)
                     if action:
                         action(*args)
+                        return True
                 else:
                     print("You don't have that item yet. Come back again when you have it.")
+                    return False
             else:
                 if item.in_inventory(self):
                     print("This item cannot be used here.")
+                    return False
                 else:
                     print("You don't have that item.")
+                    return False
 
 
 class Item:
@@ -100,7 +110,6 @@ class Item:
         self.worth = worth
         self.usable_location = usable_location
 
-
     def in_inventory(self, player: Player):
         """check if the input item is in player's inventory"""
         return self.name in [i.name for i in player.inventory]
@@ -108,7 +117,6 @@ class Item:
     def in_location(self, player: Player, loc_index: int):
         """check if item is called to use in the correct location."""
         return loc_index == self.usable_location
-
 
 
 squirrel_interactions = {
@@ -277,19 +285,19 @@ class World:
         return None
 
 
-#Librarian Class to Inherit from Player
+# Librarian Class to Inherit from Player
 class Librarian(Player):
     def __init__(self, x: int, y: int, name: str, trade_items: list):
         super().__init__(x, y)
         self.name = name
         self.trade_items = trade_items
-        #self.spawn_locations = random.sample(range(2, 7), 3)  # Randomly selects 3 rooms to spawn
+        # self.spawn_locations = random.sample(range(2, 7), 3)  # Randomly selects 3 rooms to spawn
         self.spawn_locations = [1, 2, 3]
         self.spawned_locations = []  # Tracks locations where the NPC has already spawned
 
     def check_spawn(self, player_location: tuple):
         """ Check and handle spawning of the NPC at the player's current location. """
-        #print(f"Checking Librarian spawn at {player_location}. Spawn locations are {self.spawn_locations}")
+        # print(f"Checking Librarian spawn at {player_location}. Spawn locations are {self.spawn_locations}")
         if player_location in self.spawn_locations and player_location not in self.spawned_locations:
             self.x, self.y = player_location  # Set NPC location to player location
             self.spawned_locations.append(player_location)
@@ -298,6 +306,7 @@ class Librarian(Player):
         return False
 
     def trade_for_bucks(self, player, item):
+        """ exchange player's input item for T-bucks according to its worth."""
         items = [it for it in player.inventory if it.name.strip().lower() == item.strip().lower()]
         if len(items) == 0:
             print("You don't have that item.")
@@ -306,4 +315,3 @@ class Librarian(Player):
             player.tbucks += item.worth
             player.remove_item(item)
             print(f"{item.name} has been traded | Tbucks balance increased by {item.worth}")
-

@@ -7,7 +7,7 @@ END
 LOCATION 0
 0
 This is the Room that you wake up in.
-This is the room with the vending Machine ya.
+This is the Room that you wake up in.
 END
 
 LOCATION 1
