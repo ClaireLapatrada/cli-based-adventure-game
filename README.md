@@ -18,12 +18,12 @@ Welcome to the University of Toronto's St. George campus, where your wit is test
 - customize 'help' for each location, 'read'
 - MLC code
 - Exam code
-- Enhancement
+- Enhancement (sed yung na)
 - time ticks
 - .tex writing
+- save and load
 
 ## ANNOYING ERROS
-- it keeps printing fucking descriptions of the room
 - some designs are very stuck
 ## Getting Started 🚀
 
