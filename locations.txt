@@ -6,8 +6,8 @@ END
 
 LOCATION 0
 0
-This is the Room that you wake up in.
-This is the Room that you wake up in.
+short desciption location 0
+long descirpiton locatio 0
 END
 
 LOCATION 1

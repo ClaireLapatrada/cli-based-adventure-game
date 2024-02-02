@@ -497,6 +497,13 @@ def handle_command(com, pl, w, librarian):
                     print("This location is locked. You can't enter yet.")
             else:
                 print("You can't go that way or it's out of bounds.")
+    elif com == 'look':
+        current_location = w.get_location(pl.x, pl.y)
+        if current_location and current_location.unlocked:
+            print(current_location.look())
+        else:
+            print("There's nothing to look at here.")
+        return True
     elif command == 'quit':
         quit_game = input('Do you want to save your game? [y/n]')
         if quit_game == 'y':
@@ -535,8 +542,8 @@ def handle_command(com, pl, w, librarian):
     if current_location_index == 5:
         return handle_location5(command, player, world)
 
-    # if current_location_index == 6:
-    #     return handle_location6(command, player, world)
+    if current_location_index == 6:
+        return handle_location6(command, player, world)
     return True
 
 
@@ -623,12 +630,12 @@ if __name__ == "__main__":
         current_location = world.get_location(player.x, player.y)
         command = input(">> ").strip().lower()
         continue_game = handle_command(command, player, world, librarian)
-        if command == 'look':
-            if current_location:
-                print(current_location.look())
-            else:
-                print("There's nothing to look at here.")
-        elif command == 'item':
+        # if command == 'look':
+        #     if current_location:
+        #         print(current_location.look())
+        #     else:
+        #         print("There's nothing to look at here.")
+        if command == 'item':
             print([item.name for item in world.get_location(player.x, player.y).items])
         elif command == 'inventory':
             player.show_inventory()
