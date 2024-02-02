@@ -434,8 +434,80 @@ def puzzle_caesar_salad(pl, w):
 
 
 def handle_location6(com, pl, w):
-    """Start location 6 events if it has not been cleared yet, else notify the player."""
-    pass
+    """Handle events at the Math Learning Center."""
+    print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
+    print("Help sort the papers correctly to find the cheat sheet.")
+
+    # Check if the cheat sheet has already been found
+    if 'Cheat Sheet' in [item.name for item in pl.inventory]:
+        print("You have already found the cheat sheet. No need to sort more papers.")
+        return True
+
+    while True:
+        inp = input("Type 'sort' to start sorting papers or 'leave' to exit: ").strip().lower()
+        if inp == 'sort':
+            success = helper_sort()
+            if success:
+                # Simulate finding the cheat sheet after successful sorting
+                cheat_sheet = Item('Cheat Sheet', 0, -1)  # Assuming -1 means it's not tied to a specific location
+                pl.acquire(cheat_sheet)
+                print("As you sort the papers, you find the cheat sheet hidden among them!")
+                return True  # End the location event successfully
+            else:
+                print("Game Over. You sorted the papers incorrectly too many times.")
+                return False  # Signal game over or handle it appropriately
+        elif inp == 'leave':
+            print("You decide to leave the Math Learning Center.")
+            return True
+        else:
+            print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
+
+def helper_sort():
+    """A helper function to simulate sorting Taylor Swift songs into the correct album piles."""
+    albums_songs = {
+        'Lover': 'Lover',
+        'All Too Well (10 Minute Version) (Taylor’s Version) (From The Vault)': 'Red (Taylor’s Version)',
+        'Cardigan': 'Folklore',
+        'Look What You Made Me Do': 'Reputation',
+        'Wildest Dreams': '1989',
+        'Shake It Off': '1989',
+        'You Belong With Me': 'Fearless',
+    }
+
+    albums = {
+        'Fearless': 1,
+        '1989': 2,
+        'Reputation': 3,
+        'Folklore': 4,
+        'Lover': 5,
+        'Red (Taylor’s Version)': 6,
+    }
+
+    print("Here are the albums you can sort the songs into:")
+    for album, pile in albums.items():
+        print(f"Pile {pile}: {album}")
+
+    mistakes = 0
+
+    for song, correct_album in albums_songs.items():
+        while True:
+            print(f"\nSort the song '{song}' into the correct album pile: [1, 2, 3, 4, 5, 6]")
+            try:
+                inp = int(input("Pile number: "))
+                if albums[correct_album] == inp:
+                    print(f"'{song}' sorted correctly into '{correct_album}'.")
+                    break
+                else:
+                    print("Incorrect album. Please try again.")
+                    mistakes += 1
+                    if mistakes == 3:
+                        return False  # Too many mistakes, game over
+            except ValueError:
+                print("Please enter a valid number.")
+            except KeyError:
+                print("Invalid album choice. Please try again.")
+
+    return True  # Successfully sorted all songs
 
 
 def handle_librarian_interaction(com, pl, librarian, w):
@@ -616,8 +688,8 @@ if __name__ == "__main__":
     print(world.get_location(player.x, player.y).long_description)
 
     # Testing Librian Trade
-    # world.locations[5].unlock()
-    # player.set_location(1, 0)
+    world.locations[6].unlock()
+    player.set_location(3, 0)
     # print(player.x)
     # print(world.map[player.x][player.y])
     # print(world.map)

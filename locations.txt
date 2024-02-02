@@ -61,7 +61,7 @@ Sid Smith Caesar Sald
 pppp
 END
 
-LOCAATION 6
+LOCATION 6
 0
 You are at MLC
 MLC has a TA
