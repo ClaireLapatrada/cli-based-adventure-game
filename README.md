@@ -15,12 +15,11 @@ Welcome to the University of Toronto's St. George campus, where your wit is test
 - Special thanks to the UofT for providing the ambiance and the labyrinthine layout necessary for a real adventure.
 
 ## TODO
-- customize 'help' for each location
-- Code trading acorn to the squirrel for tcard (sed la)
-- McLennan McLenjai code
+- customize 'help' for each location, 'read'
 - MLC code
 - Exam code
 - Enhancement
+- time ticks
 - .tex writing
 
 ## ANNOYING ERROS

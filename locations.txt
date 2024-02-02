@@ -44,9 +44,14 @@ END
 LOCATION 4
 0
 You are at the infamous McLennan Physics Lab.
-You are at mclennan mcdonald mclen(gub)jai a
-pppppp
-pppppppppppp
+Guided by your trusty horse, you reached a tall 14-story building tucked away in the quiet corner of the campus
+– the McLennan Physics Lab. You remembered that letter covered in stars you've been carrying.
+It felt like the right time to see if it had any clues. As you entered,
+the massive doors hinted at the mysteries inside. The night held promise,
+and maybe those words on the letter had something to reveal in the quiet halls of the McLennan Physics Lab.
+Oh, there's a telescope on the rooftop of McLennan. Does it have something to do with the letter?
+Maybe let's TAKE THE ELEVATOR on the right.
+
 END
 
 LOCATION 5

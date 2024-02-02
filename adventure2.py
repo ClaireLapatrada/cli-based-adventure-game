@@ -265,14 +265,95 @@ def horse_statue_go(com, pl, w):
 # TODO
 def handle_location4(com, pl, w):
     """Start location 4 events if it has not been cleared yet, else notify the player."""
-    print("McLennan Greetings. ")
-    w.locations[5].unlock()  # testing
+    if com == 'take the elevator':
+        if w.locations[5].unlocked:
+            print("It's already morning. The rooftop is closed.")
+        else:
+            floor = input("Floor: ")
+            while floor != "14":
+                if floor.isnumeric() and int(floor) < 14 and int(floor) >= 1:
+                    print(f"Floor {floor} is closed right now.")
+                else:
+                    print("Invalid input, please try again.")
+                floor = input("Floor: ")
+
+            print_progress_bar("On the elevator to 14th floor", duration=2, width=30)
+            print("You have arrived on the rooftop. As you look around, you see a bunch of posters along the balcony.")
+            print("Amongst the pile of posters, there is a suspicious looking black box with "
+                  "'lenx' carved at the front.")
+            print("Luckily, the telescope is right in front of you.")
+            return stars_puzzle(com, pl, w)
     return True
+
+
+def stars_puzzle(com, pl, w):
+    """ Print out stars and repeat prompts until user input the correct pin on the pin pad. """
+    solution = "697655"
+    print("To access the telescope, type 'telescope'. To access the black box, type 'open box'.")
+    while True:
+        inp = input(">> ").strip().lower()
+        if inp == 'telescope':
+            print("""
+             * Sirius
+               /
+        * Bellatrix     *
+               \       /
+                *     *
+                |     |
+        *       *     *       *
+        Alnilam       Mintaka
+                \     /
+                 *   *
+                /     *
+               *       *
+             Saiph     Rigel
+            """)
+        elif inp == 'open box':
+            print("LENX")
+            print("The pin pad only accepts 6-digits of numbers from 0-9.")
+            print("_ _ _ _ _ _")
+            user_input = input(">> ").strip()
+
+            display = ['_', '_', '_', '_', '_', '_']
+            for i, char in enumerate(user_input):
+                if i < len(display):
+                    display[i] = char
+                    print("\r" + " ".join(display), end="")
+                    time.sleep(0.5)
+
+            # Check the solution after the animation
+            if user_input == solution:
+                # Animation for revealing each letter
+
+                print("\nThe box clicks open, you find a magic looking pen in it.")
+                inp = input("Type 'acquire' to add the magic pen to your inventory: ").strip().lower()
+                while inp != 'acquire':
+                    inp = input("Type 'acquire' to add the magic pen to your inventory: ").strip().lower()
+                for item in w.get_location(pl.x, pl.y).items:
+                    pl.acquire(item)
+                print("Uhoh.. That took quite a lot of energy. It's time to refuel yourself up. "
+                      "Let's head to the closest cafeteria.")
+                world.locations[5].unlock()
+                return True
+            else:
+                print()
+                print("Some magic from the boxed pushed you out. That does not seems like the correct code. Try again.")
+                print("To access the telescope, type 'telescope'. To access the black box, type 'open box'.")
+        elif inp == "read letter":
+            print("astronomeee.")
+        elif inp == "quit":
+            return False
+        elif inp == "inventory":
+            player.show_inventory()
+        elif inp.startswith("move"):
+            print("Why would you want to move away? There is something interesting here.")
+        else:
+            print("You are not sure what to do with that.")
 
 
 def handle_location5(com, pl, w):
     """Start location 5 events if it has not been cleared yet, else notify the player."""
-    print("You're in Sid Smith, everything is closed except for a shop called 'TwoGreens'. "
+    print("You're in Sid Smith, everything is closed except for a new shop called 'TwoGreens'. "
           "What a weird name, but you need your calories.")
 
     # Initialize caesar to False
@@ -346,10 +427,15 @@ def puzzle_caesar_salad(pl, w):
         # Check the solution
         if user_input == solution:
             print("\nThe door clicks open, revealing a new path ahead.")
-            w.locations[3].unlock()  # Assuming location 3 is correct; adjust if necessary
+            w.locations[6].unlock()
             return True
         else:
-            print("\nNothing happens. Perhaps the clues in the paintings can help.")
+            print("\nNothing happens. Perhaps the clues at the bottom of the salad bowl can help.")
+
+
+def handle_location6(com, pl, w):
+    """Start location 6 events if it has not been cleared yet, else notify the player."""
+    pass
 
 
 def handle_librarian_interaction(com, pl, librarian, w):
@@ -411,7 +497,6 @@ def handle_command(com, pl, w, librarian):
                     print("This location is locked. You can't enter yet.")
             else:
                 print("You can't go that way or it's out of bounds.")
-
     elif command == 'quit':
         quit_game = input('Do you want to save your game? [y/n]')
         if quit_game == 'y':
@@ -450,6 +535,8 @@ def handle_command(com, pl, w, librarian):
     if current_location_index == 5:
         return handle_location5(command, player, world)
 
+    # if current_location_index == 6:
+    #     return handle_location6(command, player, world)
     return True
 
 
@@ -519,14 +606,7 @@ if __name__ == "__main__":
     s_short = 0.25
     time.sleep(s_short)
     player.set_location(0, 0)
-    # print_progress_bar('Following Squirel', duration=5, width=30)
-    # world.locations[2].unlock()
-    # player.set_location(0, 2)
     print(world.get_location(player.x, player.y).long_description)
-
-    # Test Location
-    # world.locations[4].unlock()
-    # player.set_location(2, 0)
 
     # Testing Librian Trade
     # world.locations[5].unlock()
