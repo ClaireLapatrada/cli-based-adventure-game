@@ -268,7 +268,6 @@ def horse_statue_go(com, pl, w):
             print("You are not sure what to do with that.")
 
 
-# TODO
 def handle_location4(com, pl, w):
     """Start location 4 events if it has not been cleared yet, else notify the player."""
     if com == 'take the elevator':
@@ -438,6 +437,7 @@ def puzzle_caesar_salad(pl, w):
         else:
             print("\nNothing happens. Perhaps the clues at the bottom of the salad bowl can help.")
 
+
 def handle_location6(com, pl, w):
     """Handle events at the Math Learning Center."""
     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
@@ -468,6 +468,39 @@ def handle_location6(com, pl, w):
         else:
             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
 
+<<<<<<< HEAD
+=======
+# def handle_location6(com, pl, w):
+#     """Handle events at the Math Learning Center."""
+#     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
+#     print("Help sort the papers correctly to find the cheat sheet.")
+#
+#     # Check if the cheat sheet has already been found
+#     if 'Cheat Sheet' in [item.name for item in pl.inventory]:
+#         print("You have already found the cheat sheet. No need to sort more papers.")
+#         return True
+#
+#     while True:
+#         inp = input("Type 'sort' to start sorting papers or 'leave' to exit: ").strip().lower()
+#         if inp == 'sort':
+#             success = helper_sort()
+#             if success:
+#                 # Simulate finding the cheat sheet after successful sorting
+#                 cheat_sheet = Item('Cheat Sheet', 0, -1)  # Assuming -1 means it's not tied to a specific location
+#                 pl.acquire(cheat_sheet)
+#                 print("As you sort the papers, you find the cheat sheet hidden among them!")
+#                 return True  # End the location event successfully
+#             else:
+#                 print("Game Over. You sorted the papers incorrectly too many times.")
+#                 return False  # Signal game over or handle it appropriately
+#         elif inp == 'leave':
+#             print("You decide to leave the Math Learning Center.")
+#             return True
+#         else:
+#             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
+
+
+>>>>>>> cfd121429347d97c4e5a95dda94ba8bb003583ff
 def helper_sort():
     """A helper function to simulate sorting Taylor Swift songs into the correct album piles."""
     albums_songs = {
@@ -550,6 +583,8 @@ def flip_blackboard(com, pl, w):
         print("\nEither way, you feel prepared and ready for the test. Goodbye!")
 
     return False
+
+
 def handle_librarian_interaction(com, pl, librarian, w):
     """ handle any interaction with the librarian. """
     if com.startswith('loot'):
@@ -626,7 +661,11 @@ def handle_command(com, pl, w, librarian):
         return False  # Signal to exit the game loop
 
     elif command == 'help':
+<<<<<<< HEAD
         print(f"Available commands: {world.get_location(pl.x, pl.y).valid_commands}")
+=======
+        print(f"Available commands: {world.get_location(pl.x,pl.y).valid_commands}")
+>>>>>>> cfd121429347d97c4e5a95dda94ba8bb003583ff
     lib_index = w.map[pl.x][pl.y]
     librarian_present = lib_index in librarian.spawn_locations
     # Prioritize librarian interactions if present
@@ -727,9 +766,26 @@ if __name__ == "__main__":
     s_short = 0.25
     time.sleep(s_short)
     world.locations[0].unlock()
+<<<<<<< HEAD
     player.set_location(1, 1)
     print(world.get_location(player.x, player.y).long_description)
 
+=======
+    player.set_location(0, 0)
+    print(world.get_location(player.x, player.y).long_description)
+
+    # Testing Librian Trade
+    # world.locations[6].unlock()
+    # player.set_location(3, 0)
+
+    # print(player.x)
+    # print(world.map[player.x][player.y])
+    # print(world.map)
+    # world.locations[2].unlock()
+    # player.set_location(0, 2)
+    # player.inventory +=
+
+>>>>>>> cfd121429347d97c4e5a95dda94ba8bb003583ff
     continue_game = True
     while continue_game:
         current_location = world.get_location(player.x, player.y)
