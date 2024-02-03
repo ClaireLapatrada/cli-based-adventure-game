@@ -8,17 +8,18 @@ END
 LOCATION 0
 0
 follow squirrel
-short description location 0
-long descirpiton location 0
+This is the room you wake up in.
+You awaken in the quiet grandeur of University College (UC)'s Library, heart pounding.
+The weight of UC's history pressing upon you as you gather your wits and
+embark on a quest for your missing test essentials.
 END
 
 LOCATION 1
 0
-help,item,inventory,vending,inspect squirrel,inspect,type code,loot,quit,look,move [direction]
+help,item,inventory,vending,inspect squirrel,inspect,type code,loot,quit,look,move,interaction,hint,item
 You are in a dimly lit room with a glimmering vending machine as the focal point.
 You find yourself in a dark room, the only source of light emanating from a strangely
-attractive vending machine that glimmers in the corner. The room feels confined,
-with no visible exits or windows. The door you entered through now seems permanently locked,
+attractive VENDING MACHINE that glimmers in the corner. The door you entered through now seems permanently locked,
 effectively cutting off any retreat. The vending machine, with its soft humming and flickering lights,
 beckons you closer, casting an eerie glow in the otherwise pitch-black environment.
 It's unclear what secrets this machine holds, but it seems to be your only point of interaction in this enigmatic space.
@@ -26,8 +27,8 @@ END
 
 LOCATION 2
 0
-help,item,inventory,quit,loot,talk,next,look,move [direction]
-You are in a hallway full of paintings in Hart House.
+help,item,inventory,quit,loot,talk,next,look,move,interaction,hint,item
+You are in a hallway full of portrait paintings in Hart House. Have you [talk]ed to them yet?
 As you step into the hallway, a surreal silence envelops you.
 The walls are adorned with various paintings, each one seemingly alive in the dim light of dawn.
 There's no one around, yet you hear faint whispers, as if the painted figures are conversing in hushed tones.
@@ -36,7 +37,7 @@ END
 
 LOCATION 3
 0
-help,item,inventory,quit,loot,inspect,look,use,move [direction],keep,mount
+help,item,inventory,quit,loot,inspect,look,use,move,keep,mount,interaction,hint,item
 You are at the heart of Queen’s Park.
 You wander into the dawn of Queen's Park where trees wear glistening snow like delicate jewels.
 The majestic horse statue stands prominent amidst the tranquil surroundings.
@@ -48,7 +49,7 @@ END
 
 LOCATION 4
 0
-help,item,inventory,quit,loot,look,move [direction],take the elevator,telescope,open box,acquire,read letter
+help,item,inventory,quit,loot,look,move,take the elevator,telescope,open box,acquire,read letter,interaction,hint,item
 You are at the infamous McLennan Physics Lab.
 Guided by your trusty horse, you reached a tall 14-story building tucked away in the quiet corner of the campus
 – the McLennan Physics Lab. You remembered that letter covered in stars you've been carrying.
@@ -57,20 +58,19 @@ the massive doors hinted at the mysteries inside. The night held promise,
 and maybe those words on the letter had something to reveal in the quiet halls of the McLennan Physics Lab.
 Oh, there's a telescope on the rooftop of McLennan. Does it have something to do with the letter?
 Maybe let's TAKE THE ELEVATOR on the right.
-
 END
 
 LOCATION 5
 0
-help,item,inventory,quit,loot,look,move [direction],eat,examine
+help,item,inventory,quit,loot,look,move,eat,examine,interaction,hint,item
 Sid Smith Cafeteria
-Sid Smith Caesar Sald
+Sid Smith Caesar Salad
 pppp
 END
 
 LOCATION 6
 0
-help,item,inventory,quit,loot,look,move [direction],examine,sort,leave
+help,item,inventory,quit,loot,look,move,examine,sort,leave,interaction,hint,item
 You are at MLC
 MLC has a TA
 END
