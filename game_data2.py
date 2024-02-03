@@ -297,7 +297,7 @@ class Librarian(Player):
         self.name = name
         self.trade_items = trade_items
         # self.spawn_locations = random.sample(range(2, 7), 3)  # Randomly selects 3 rooms to spawn
-        self.spawn_locations = [1, 2, 3]
+        self.spawn_locations = [4 , 2, 3]
         self.spawned_locations = []  # Tracks locations where the NPC has already spawned
         self.interacted = False
 
