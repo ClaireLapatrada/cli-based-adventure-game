@@ -432,11 +432,9 @@ def puzzle_caesar_salad(pl, w):
         else:
             print("\nNothing happens. Perhaps the clues at the bottom of the salad bowl can help.")
 
-
 def handle_location6(com, pl, w):
     """Handle events at the Math Learning Center."""
     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
-    print("Help sort the papers correctly to find the cheat sheet.")
 
     # Check if the cheat sheet has already been found
     if 'Cheat Sheet' in [item.name for item in pl.inventory]:
@@ -452,21 +450,52 @@ def handle_location6(com, pl, w):
                 cheat_sheet = Item('Cheat Sheet', 0, -1)  # Assuming -1 means it's not tied to a specific location
                 pl.acquire(cheat_sheet)
                 print("As you sort the papers, you find the cheat sheet hidden among them!")
-                return True  # End the location event successfully
+                # Call to flip blackboard after finding the cheat sheet
+                flip_blackboard(com, pl, w)
+                return False  # End the location event and game
             else:
                 print("Game Over. You sorted the papers incorrectly too many times.")
                 return False  # Signal game over or handle it appropriately
         elif inp == 'leave':
             print("You decide to leave the Math Learning Center.")
-            return True
+            return True  # Player decides to leave without sorting
         else:
             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
+
+# def handle_location6(com, pl, w):
+#     """Handle events at the Math Learning Center."""
+#     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
+#     print("Help sort the papers correctly to find the cheat sheet.")
+#
+#     # Check if the cheat sheet has already been found
+#     if 'Cheat Sheet' in [item.name for item in pl.inventory]:
+#         print("You have already found the cheat sheet. No need to sort more papers.")
+#         return True
+#
+#     while True:
+#         inp = input("Type 'sort' to start sorting papers or 'leave' to exit: ").strip().lower()
+#         if inp == 'sort':
+#             success = helper_sort()
+#             if success:
+#                 # Simulate finding the cheat sheet after successful sorting
+#                 cheat_sheet = Item('Cheat Sheet', 0, -1)  # Assuming -1 means it's not tied to a specific location
+#                 pl.acquire(cheat_sheet)
+#                 print("As you sort the papers, you find the cheat sheet hidden among them!")
+#                 return True  # End the location event successfully
+#             else:
+#                 print("Game Over. You sorted the papers incorrectly too many times.")
+#                 return False  # Signal game over or handle it appropriately
+#         elif inp == 'leave':
+#             print("You decide to leave the Math Learning Center.")
+#             return True
+#         else:
+#             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
 
 def helper_sort():
     """A helper function to simulate sorting Taylor Swift songs into the correct album piles."""
     albums_songs = {
         'Lover': 'Lover',
-        'All Too Well (10 Minute Version) (Taylor’s Version) (From The Vault)': 'Red (Taylor’s Version)',
+        'All Too Well (Taylor’s Version) (From The Vault)': 'Red (Taylor’s Version)',
         'Cardigan': 'Folklore',
         'Look What You Made Me Do': 'Reputation',
         'Wildest Dreams': '1989',
@@ -507,9 +536,43 @@ def helper_sort():
             except KeyError:
                 print("Invalid album choice. Please try again.")
 
-    return True  # Successfully sorted all songs
+    return True
 
 
+def flip_blackboard(com, pl, w):
+    """
+    A function to conclude the game by checking player's inventory, Tbucks, and offering a final message.
+    """
+    # Prompt for inventory check
+    print("\nBefore you head to the exam center, let's make sure you have everything you need.")
+    pl.show_inventory()
+
+    # Conclude Tbucks and rank the player
+    tbucks = pl.tbucks
+    print(f"\nYou have {tbucks} Tbucks.")
+
+    if tbucks >= 100:
+        rank = "Gold"
+    elif 50 <= tbucks < 100:
+        rank = "Silver"
+    else:
+        rank = "Bronze"
+
+    print(f"Based on your Tbucks, you've earned a {rank} Side Quest ranking!")
+
+    # Flip the blackboard
+    print("\nAs you prepare to leave, you notice something written on the blackboard.")
+    flip = input("Flip the blackboard to read the message? (yes/no): ").strip().lower()
+
+    if flip == "yes":
+        print("\nYou have successfully acquired all necessary items. Well done. Best of luck on the test.")
+        print("\nRemember, it's the friends we made along the way that truly matter.")
+        print("\nThank you for playing. Goodbye!")
+    else:
+        print("\nYou choose not to flip the blackboard, wondering what could have been written.")
+        print("\nEither way, you feel prepared and ready for the test. Goodbye!")
+
+    return False
 def handle_librarian_interaction(com, pl, librarian, w):
     """ handle any interaction with the librarian. """
     # print("you're in a territory with a librarian that can trade with you")
