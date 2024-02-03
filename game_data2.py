@@ -320,7 +320,7 @@ class Librarian(Player):
         else:
             item = items[0]
             if item.worth == -1:
-                print("Why are you trading someth ing you need? ")
+                print("Why are you trading something you need? ")
             else:
                 player.tbucks += item.worth
                 player.remove_item(item)

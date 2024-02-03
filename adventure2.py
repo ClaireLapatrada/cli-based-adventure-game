@@ -10,7 +10,7 @@ def handle_location0(com, pl, w):
         print("You see a squirrel next to your table, it looks like its calling you over. ")
         print("Type [follow squirrel]")
         com = input(">> ").strip().lower()
-        while not com.startswith('follow'):
+        while not com.startswith('follow squirrel'):
             print("Try again! Type [follow squirrel]")
             com = input(">> ").strip().lower()
         player.step_counts += 1
@@ -54,7 +54,8 @@ def handle_location1(com, pl, w):
 
     # Simplify by initializing the squirrel here with the trade items
     squirrel = Librarian(0, 0, 'Squirrel', [])
-    squirrel.trade_items = ['Tcard', 'Chocolate']
+    squirrel.trade_items = ['Tcard']
+    # squirrel.trade_items = ['Tcard', 'Chocolate']
 
     # Trade interaction loop
     while not traded:
@@ -78,7 +79,6 @@ def handle_location1(com, pl, w):
             pl.show_inventory()
         else:
             print("To trade with the squirrel, type 'trade [item]'.")
-
     exit = ""
     return traded  # Return the status of the trade
 
@@ -140,7 +140,6 @@ def handle_location2(com, pl, w):
             print("Talking with paintings won't solve more of your problems.")
         return paintings_hint()
     elif com == 'next':
-        player.step_counts += 1
         current_painting_index += 1
         return paintings_hint()
     elif com == "quit":
@@ -662,13 +661,16 @@ def flip_blackboard(com, pl, w):
 
     if flip == "yes":
         player.step_counts += 1
+        print("==========================================================================================")
         print("\nYou have successfully acquired all necessary items. Well done. Best of luck on the test.")
         print("\nRemember, it's the friends we made along the way that truly matter.")
         print("\nThank you for playing. Goodbye!")
+        print("==========================================================================================")
     else:
+        print("==========================================================================================")
         print("\nYou choose not to flip the blackboard, wondering what could have been written.")
         print("\nEither way, you feel prepared and ready for the test. Goodbye!")
-
+        print("==========================================================================================")
     return False
 
 
@@ -689,8 +691,8 @@ def handle_librarian_interaction(com, pl, librarian, w):
             if do == 'trade':
                 player.step_counts += 1
                 librarian.trade_for_bucks(pl, item)
-            elif do == 'my' and item =='inventory':
-                print(player.show_inventory())
+            elif do == 'my' and item == 'inventory':
+                player.show_inventory()
             elif do.startswith('drop'):
                 player.step_counts += 1
                 print("drop logic #TODO")
@@ -788,8 +790,8 @@ def handle_command(com, pl, w, librarian):
     if player.step_counts > max_count:
         print("Game Over. The exam started. You didn't make it there on time.")
         return False
-    elif player.step_counts > max_count - 10:
-        print(f"[WARNING] Be wise! You only have {max_count - player.step_counts} more moves until the exam starts!")
+    elif player.step_counts + 1> max_count - 10:
+        print(f"[WARNING] Be wise! You only have {max_count - player.step_counts + 1} more moves until the exam starts!")
 
     if current_location_index == 0:
         return handle_location0(command, player, world)
@@ -885,10 +887,21 @@ if __name__ == "__main__":
           "3. TCard \n"
           "Your mission is to navigate the world and 'acquire' these items in your inventory before the test begins.")
     print("-----------------")
+    time.sleep(0.5)
+    print("(*) General Commands:\n"
+          "[quit]: Exit the game \n"
+          "[move [direction]]: Move player in the specified direction \n"
+          "[inventory]: Show player's inventory \n"
+          "[look]: Print the brief description for player's current location \n"
+          "[hint]: Provide game hints for each location \n"
+          "[help]: Show all available commands in player's current location \n"
+          "[interaction]: Show the number of interactions left before the exam starts \n"
+          "[item]: Show all obtainable items in player's current location \n"
+          "Notes: Some commands are not available while solving specific puzzles.")
+    print("-----------------")
     time.sleep(0.6)
     print("(*) Interaction Limit: You have exactly 42 interactions.\n"
-          "Each valid command you enter except "
-          "['quit', 'move', 'inventory', 'look', 'hint', 'help', 'interaction', 'item'] \n"
+          "Each valid command you enter except the General Commands (see above), some event interactions, \n"
           "and input to the Final Challenge counts as one interaction. Choose wisely to avoid a premature game over! \n"
           "You can type 'help' to see the valid commands in each location.")
     print("-----------------")
