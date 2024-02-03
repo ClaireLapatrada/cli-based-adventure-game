@@ -490,7 +490,7 @@ def puzzle_caesar_salad(pl, w):
     solution = "mlc"  # Lowercase for consistent comparison
 
     while True:
-        print("\nYou stand before a door with no handles, only a panel with letters.")
+        print("\nA pink portal appeared before you, on it is a panel with letters.")
         print("_ _ _")
         user_input = input(">> ").strip().lower()
 
@@ -509,7 +509,7 @@ def puzzle_caesar_salad(pl, w):
 
         # Check the solution
         if user_input == solution:
-            print("\nThe door clicks open, revealing a new path ahead.")
+            print("\nThe pink portal opens up, revealing a new path ahead.")
             w.locations[6].unlock()
             return True
         else:
