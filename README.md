@@ -15,10 +15,8 @@ Welcome to the University of Toronto's St. George campus, where your wit is test
 - Special thanks to the UofT for providing the ambiance and the labyrinthine layout necessary for a real adventure.
 
 ## TODO
-- customize 'help' for each location, 'read'
-- MLC code
-- Exam code
-- Enhancement (sed yung na)
+- make 'repeat' command, 'read'
+- make helper function command listen to "help"
 - time ticks
 - .tex writing
 - save and load

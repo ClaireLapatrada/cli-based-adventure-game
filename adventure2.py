@@ -6,9 +6,7 @@ import json
 
 def handle_location0(com, pl, w):
     """Start location 0's events if it has not been cleared yet, else notify the player."""
-    if w.locations[1].unlocked:
-        print("There is nothing interesting in your bedroom. Go touch grass :)")
-    else:
+    if not w.locations[1].unlocked:
         print("You wake up in your room and see a squirrel outside your window...")
         print("type 'follow squirrel'")
         com = input(">> ").strip().lower()
@@ -17,10 +15,10 @@ def handle_location0(com, pl, w):
             com = input(">> ").strip().lower()
         print_progress_bar('Following Squirel', duration=3, width=30)
         w.locations[1].unlock()
-        location_index = w.map[0][1]
+        location_index = w.map[1][2]
         new_location = w.locations[location_index]
-        print(w.locations)
-        player.set_location(1, 1)
+        # print(w.locations)
+        player.set_location(1, 2)
         print(new_location.long_description)
     return True
 
@@ -31,9 +29,7 @@ def handle_location1(com, pl, w):
     global traded
     # Ensure the player interacts with the vending machine first
     # Handle the vending machine puzzle
-    if w.locations[2].unlocked:
-        print("There is nothing interesting here anymore")
-    else:
+    if not w.locations[2].unlocked:
         inp = input('Try inspecting the vending machine: type [vending]: ').strip().lower()
         while "vending" not in inp:
             inp = input('Try inspecting the vending machine by typing [vending], or learn to type!').strip().lower()
@@ -110,12 +106,10 @@ current_painting_index = 0
 def handle_location2(com, pl, w):
     """Start location 2's events if it has not been cleared yet, else notify the player."""
     global current_painting_index
-
     if com == 'talk':
         if w.locations[3].unlocked:
             print("Talking with paintings won't solve more of your problems.")
-        else:
-            return paintings_hint()
+        return paintings_hint()
     elif com == 'next':
         current_painting_index += 1
         return paintings_hint()
@@ -246,16 +240,16 @@ def horse_statue_read(com, pl, w):
 def horse_statue_go(com, pl, w):
     """Ask user for the correct command, print progress bar for riding the horse,
     unlock and update new location as arrived. Print new location description. Handle all other commands."""
-    print("Great! Now we have a letter. Oh wait.. The horse statue is moving!? To where? Let's mount on to see.")
+    print("Great! Now we have a letter. Oh wait.. The horse statue is moving!? To where? Let's MOUNT on to see.")
     while True:
         inp = input(">> ").strip().lower()
         if inp == 'mount':
             world.locations[4].unlock()
             print("weeeee let's go!")
             print_progress_bar("riding the horse", duration=5, width=30)
-            location_index = world.map[2][0]
+            location_index = world.map[4][1]
             new_location = world.locations[location_index]
-            player.set_location(2, 0)
+            player.set_location(4, 1)
             print(new_location.long_description)
             return True
         elif inp == "quit":
@@ -299,20 +293,21 @@ def stars_puzzle(com, pl, w):
         inp = input(">> ").strip().lower()
         if inp == 'telescope':
             print("""
-             * Sirius
-               /
-        * Bellatrix     *
-               \       /
-                *     *
-                |     |
-        *       *     *       *
-        Alnilam       Mintaka
-                \     /
-                 *   *
-                /     *
-               *       *
-             Saiph     Rigel
+                         * Sirius
+                           /
+                    * Bellatrix     *
+                           \\       /
+                            *     *
+                            |     |
+                    *       *     *       *
+                    Alnilam       Mintaka
+                            \\     /
+                             *   *
+                            /     *
+                           *       *
+                         Saiph     Rigel
             """)
+
         elif inp == 'open box':
             print("LENX")
             print("The pin pad only accepts 6-digits of numbers from 0-9.")
@@ -468,8 +463,6 @@ def handle_location6(com, pl, w):
         else:
             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
 
-<<<<<<< HEAD
-=======
 # def handle_location6(com, pl, w):
 #     """Handle events at the Math Learning Center."""
 #     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
@@ -500,7 +493,6 @@ def handle_location6(com, pl, w):
 #             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
 
 
->>>>>>> cfd121429347d97c4e5a95dda94ba8bb003583ff
 def helper_sort():
     """A helper function to simulate sorting Taylor Swift songs into the correct album piles."""
     albums_songs = {
@@ -661,11 +653,7 @@ def handle_command(com, pl, w, librarian):
         return False  # Signal to exit the game loop
 
     elif command == 'help':
-<<<<<<< HEAD
         print(f"Available commands: {world.get_location(pl.x, pl.y).valid_commands}")
-=======
-        print(f"Available commands: {world.get_location(pl.x,pl.y).valid_commands}")
->>>>>>> cfd121429347d97c4e5a95dda94ba8bb003583ff
     lib_index = w.map[pl.x][pl.y]
     librarian_present = lib_index in librarian.spawn_locations
     # Prioritize librarian interactions if present
@@ -766,12 +754,7 @@ if __name__ == "__main__":
     s_short = 0.25
     time.sleep(s_short)
     world.locations[0].unlock()
-<<<<<<< HEAD
     player.set_location(1, 1)
-    print(world.get_location(player.x, player.y).long_description)
-
-=======
-    player.set_location(0, 0)
     print(world.get_location(player.x, player.y).long_description)
 
     # Testing Librian Trade
@@ -785,7 +768,6 @@ if __name__ == "__main__":
     # player.set_location(0, 2)
     # player.inventory +=
 
->>>>>>> cfd121429347d97c4e5a95dda94ba8bb003583ff
     continue_game = True
     while continue_game:
         current_location = world.get_location(player.x, player.y)
