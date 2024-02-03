@@ -38,19 +38,17 @@ def handle_location1(com, pl, w):
         player.step_counts += 1
         # Assuming passkey_vending is a function that handles the puzzle and unlocks the next location upon success
         passkey_vending(pl, w)
-        print("You have successfully looted the vending machine! \n ")
-        print("\n")
-        print("Another door appears... that seems to lead to another hallway east.\n")
-        print("Only UofT Students are allowed in though, but you don't have your TCard.\n")
-        print("\n")
+        print("\n You have successfully looted the vending machine! \n ")
+        print("Another door appears... that seems to lead to another hallway east.")
+        print("Only UofT Students are allowed in though, but you don't have your TCard. \n")
         # Handle the squirrel interaction
         inp = input('Try type [inspect squirrel]: ').strip().lower()
         while inp != 'inspect squirrel':
             player.step_counts += 1
             inp = input('Try type [inspect squirrel] to continue: ').strip().lower()
 
-        print(
-            "The squirrel seems to be holding your Tcard!\nCan you trade something that you have (it likes) for that Tcard?!")
+        print("\nThe squirrel seems to be holding your Tcard!"
+              "Can you trade something that you have (it likes) for that Tcard?!\n")
 
     # Simplify by initializing the squirrel here with the trade items
     squirrel = Librarian(0, 0, 'Squirrel', [])
@@ -87,10 +85,10 @@ def passkey_vending(pl, w):
     """Ask player for input for the vending machine, drop item when the correct code has been input.
     Handle all other commands."""
     vending_machine = ['acorn', 'almond', 'peanut', 'cashew', 'pecan', 'horse shoe']
-    print("The squirrel is dancing around the machine, pointing to something inside that you can't figure out.\n")
-    print("The vending machine has no slot for coins, only an alphanumeric keypad. It's probably free.\n")
-    print(f"There's a variety of nuts sold here: {vending_machine}\n")
-    print("Type [type code] to select an item you want.\n")
+    print("\nThe squirrel is dancing around the machine, pointing to something inside that you can't figure out.")
+    print("The vending machine has no slot for coins, only an alphanumeric keypad. It's probably free.")
+    print(f"There's a variety of nuts sold here: {vending_machine}")
+    print("\nType [type code] to select an item you want.\n")
     while True:
         inp = input(">> ").strip().lower()
         if inp.startswith("inspect"):
@@ -100,8 +98,7 @@ def passkey_vending(pl, w):
             player.step_counts += 1
             code = input("Enter code: ").strip().lower()
             if code == "acorn":  # Replace with the actual code
-                print("You hear a click sound as the next room is unlocked.")
-                # Assuming location 2 is the next one
+                print("You hear a click sound as the next room is unlocked. \n")
                 for item in w.get_location(pl.x, pl.y).items:
                     if item.name.lower() != 'tcard':
                         pl.acquire(item)
@@ -399,9 +396,12 @@ def stars_puzzle(com, pl, w):
                 inp = input("Type 'acquire' to add the lucky pen to your inventory: ").strip().lower()
                 while inp != 'acquire':
                     inp = input("Type 'acquire' to add the lucky pen to your inventory: ").strip().lower()
-                for item in w.get_location(pl.x, pl.y).items:
-                    pl.acquire(item)
-                print("Uhoh.. That took quite a lot of energy. It's time to refuel yourself up. "
+                for item in world.get_location(player.x, player.y).items:
+                    player.acquire(item)
+                letter = [i for i in player.inventory if i.name.lower() == 'letter'][0]
+                player.remove_item(letter)
+                print("Uhoh.. You dropped your letter. Oh well, you probably won't need it anymore."
+                      "That took quite a lot of energy. It's time to refuel yourself up. "
                       "Let's head to the closest cafeteria.")
                 world.locations[5].unlock()
                 return True
@@ -630,7 +630,8 @@ def helper_sort():
                 print("Please enter a valid number.")
             except KeyError:
                 print("Invalid album choice. Please try again.")
-
+    for item in world.get_location(player.x, player.y).items:
+        player.acquire(item)
     return True
 
 
@@ -664,7 +665,7 @@ def flip_blackboard(com, pl, w):
         print("==========================================================================================")
         print("\nYou have successfully acquired all necessary items. Well done. Best of luck on the test.")
         print("\nRemember, it's the friends we made along the way that truly matter.")
-        print("\nThank you for playing. Goodbye!")
+        print("\nThank you for playing. Goodbye! \n")
         print("==========================================================================================")
     else:
         print("==========================================================================================")
@@ -785,7 +786,7 @@ def handle_command(com, pl, w, librarian):
     # print("after spawn")
     librarian_present = lib_index in librarian.spawn_locations and not librarian.interacted
     if librarian_present:
-        print("You're in a territory with a librarian that can trade with you.")
+        print("You're in a territory with a librarian that can trade with you. Type [loot] to begin trading.")
         if com.startswith('loot'):
             handle_librarian_interaction(com, pl, librarian, w)
             return True
