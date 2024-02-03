@@ -312,13 +312,18 @@ class Librarian(Player):
     def trade_for_bucks(self, player, item):
         """ exchange player's input item for T-bucks according to its worth."""
         items = [it for it in player.inventory if it.name.strip().lower() == item.strip().lower()]
+
         if len(items) == 0:
             print("You don't have that item.")
         else:
             item = items[0]
-            player.tbucks += item.worth
-            player.remove_item(item)
-            print(f"{item.name} has been traded | Tbucks balance increased by {item.worth}")
+            if item.worth == -1:
+                print("Why are you trading someth ing you need? ")
+            else:
+                player.tbucks += item.worth
+                player.remove_item(item)
+                print(f"{item.name} has been traded | Tbucks balance increased by {item.worth}")
+                print(f"Tbucks balance: {player.tbucks}")
 
     def pity(self):
         self.interacted = True

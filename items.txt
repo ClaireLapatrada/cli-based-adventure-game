@@ -1,5 +1,9 @@
 1 1 500 Acorn
-1 3 500 Horse Shoe
+1 1 250 Almond
+1 1 175 Peanut
+1 1 120 Cashew
+1 1 200 Pecan
+1 3 -1 Horse Shoe
 2 0 -1 T-card
 3 0 500 Letter
 4 0 -1 Magic Pen

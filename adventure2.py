@@ -7,13 +7,14 @@ import json
 def handle_location0(com, pl, w):
     """Start location 0's events if it has not been cleared yet, else notify the player."""
     if not w.locations[1].unlocked:
-        print("You wake up in your room and see a squirrel outside your window...")
-        print("type 'follow squirrel'")
+        print("You see a squirrel next to your table, it looks like its calling you over. ")
+        print("Type [follow squirrel]")
         com = input(">> ").strip().lower()
         while not com.startswith('follow'):
-            print("do you need TYPING LESSSONS")
+            print("Try again! Type [follow squirrel]")
             com = input(">> ").strip().lower()
-        print_progress_bar('Following Squirel', duration=3, width=30)
+        print_progress_bar('Following Squirrel', duration=3, width=30)
+        print(" ")
         w.locations[1].unlock()
         location_index = w.map[1][2]
         new_location = w.locations[location_index]
@@ -36,9 +37,13 @@ def handle_location1(com, pl, w):
 
         # Assuming passkey_vending is a function that handles the puzzle and unlocks the next location upon success
         passkey_vending(pl, w)
-        print(
-            "You have successfully looted the vending machine! \nAnother door appears... that seems to lead to another hallway east.\nOnly UofT Students are allowed in though, but you don't have your TCard.")
 
+
+        print("You have successfully looted the vending machine! \n ")
+        print("\n")
+        print("Another door appears... that seems to lead to another hallway east.\n")
+        print("Only UofT Students are allowed in though, but you don't have your TCard.\n")
+        print("\n")
         # Handle the squirrel interaction
         inp = input('Try type [inspect squirrel]: ').strip().lower()
         while inp != 'inspect squirrel':
@@ -78,14 +83,17 @@ def handle_location1(com, pl, w):
 def passkey_vending(pl, w):
     """Ask player for input for the vending machine, drop item when the correct code has been input.
     Handle all other commands."""
-    print("The vending machine has no slot for coins, only an alphanumeric keypad.")
+    print("The squirrel is dancing around the machine, pointing to something inside that you can't figure out.\n")
+    print("The vending machine has no slot for coins, only an alphanumeric keypad.\n")
+    print("There's a variety of nuts sold [acorn, almond, peanut, cashew, pecan]\n")
+    print("Type [type code] to buy an item.\n")
     while True:
         inp = input(">> ").strip().lower()
         if inp.startswith("inspect"):
             print("You inspect the vending machine closely.")
         elif inp == "type code":
             code = input("Enter code: ").strip()
-            if code == "correct_code":  # Replace with the actual code
+            if code == "acorn":  # Replace with the actual code
                 print("You hear a click sound as the next room is unlocked.")
                 # Assuming location 2 is the next one
                 for item in w.get_location(pl.x, pl.y).items:
@@ -215,7 +223,7 @@ def horse_statue_read(com, pl, w):
     while True:
         inp = input(">> ").strip().lower()
         if inp == 'inspect':
-            print("There is a mystery letter in here. It reads ['astronomeeee']")
+            print("There is a mystery letter in here. It reads [It's ASTRONOMY, we're two worlds apart]")
             print()
             print("The letter might be useful later on. You might want to keep it.")
             inp = input(">> ").strip().lower()
@@ -245,7 +253,7 @@ def horse_statue_go(com, pl, w):
         inp = input(">> ").strip().lower()
         if inp == 'mount':
             world.locations[4].unlock()
-            print("weeeee let's go!")
+            print("Weee let's go!")
             print_progress_bar("riding the horse", duration=5, width=30)
             location_index = world.map[4][1]
             new_location = world.locations[location_index]
@@ -277,8 +285,8 @@ def handle_location4(com, pl, w):
                 floor = input("Floor: ")
 
             print_progress_bar("On the elevator to 14th floor", duration=2, width=30)
-            print("You have arrived on the rooftop. As you look around, you see a bunch of posters along the balcony.")
-            print("Amongst the pile of posters, there is a suspicious looking black box with "
+            print("You have arrived on the rooftop. As you look around, you see a bunch of posters along the balcony.\n")
+            print("Amongst the pile of posters, there is a suspicious looking black box with \n"
                   "'lenx' carved at the front.")
             print("Luckily, the telescope is right in front of you.")
             return stars_puzzle(com, pl, w)
@@ -581,15 +589,20 @@ def handle_librarian_interaction(com, pl, librarian, w):
     """ handle any interaction with the librarian. """
     if com.startswith('loot'):
         # Example trade logic
-        print("Trade begins: use command like\n"
-              "[trade: trade unused item for Tbucks, drop: to drop items, bargain: to ask nicely for MORE Tbucks]\n"
-              "[pity: leave the poor librian alon WARNING: you cannot loot this poor soul again")
+        print("Trade begins! Use commands like...\n"
+              "[my inventory] : to check your Inventory \n"
+              "[trade] : trade unused item for T-bucks, drop: to drop items \n"
+              "[bargain] : to ask nicely for MORE T-bucks]\n"
+              "[pity] : to Exit and leave librarian alone\n "
+              "WARNING: after [pity] you cannot loot this poor soul again")
     while True:
         inp = input(">> ").strip().lower()
         if len(inp.split()) >= 2:
             do, item = inp.split(' ', 1)
             if do == 'trade':
                 librarian.trade_for_bucks(pl, item)
+            elif do == 'my' and item =='inventory':
+                print(player.show_inventory())
             elif do.startswith('drop'):
                 print("drop logic #TODO")
             elif do.startswith('bargain'):
@@ -629,8 +642,6 @@ def handle_command(com, pl, w, librarian):
                 if new_location.unlocked:
                     pl.x, pl.y = new_x, new_y
                     current_location_index = w.map[pl.x][pl.y]
-                    # print(pl.x)
-                    # print(pl.y)
                     print(new_location.long_description)
                     w.locations[location_index].visited = True
                 else:
@@ -659,7 +670,7 @@ def handle_command(com, pl, w, librarian):
     # Prioritize librarian interactions if present
 
     if librarian_present and not librarian.interacted:
-        print("you're in a territory with a librarian that can trade with you and haven't traded")
+        print("You're in a territory with a librarian that can traded. !Must Loot! Type [loot] to interact. ")
         if command.startswith('loot'):
             print("loot librarian")
             handle_librarian_interaction(command, pl, librarian, w)
@@ -737,25 +748,49 @@ if __name__ == "__main__":
     used = False
 
     # new code
-
-    start_choice = input("Do you want to 'start' a new game or 'load' saved game? ")
-    if start_choice == 'load':
-        try:
-            load_game(player, world)
-        except FileNotFoundError:
-            print("No saved game found. Starting a new game.")
-    if world.new_game:
-        print("Welcome to the Text Adventure Game!")
-        print("Rules and Regulations")
-    else:
-        print("Welcome BACK to Text Adventure Game!")
-        print("same rules apply")
-
+    # start_choice = input("Do you want to 'start' a new game or 'load' saved game? ")
+    # if start_choice == 'load':
+    #     try:
+    #         load_game(player, world)
+    #     except FileNotFoundError:
+    #         print("No saved game found. Starting a new game.")
+    # if world.new_game:
+    #     print("Welcome to the Text Adventure Game!")
+    #     print("Rules and Regulations")
+    # else:
+    #     print("Welcome BACK to Text Adventure Game!")
+    #     print("same rules apply")
+    print("Welcome to Text Adventure Game!")
+    start_choice = input("Type [Read Rules]: ")
+    while start_choice.lower() != 'read rules':
+        start_choice = input("Try Again! Type [Read Rules]: ")
+    print("Game Objective: It's the morning of a big test, and you realize you've lost your three essential items: \n"
+          "1. Your Lucky pen\n"
+          "2. Cheat Sheet\n"
+          "2. TCard. \n"
+          "Your mission is to navigate the world and 'acquire' these items in your inventory before the test begins.")
+    print("-----------------")
+    time.sleep(0.6)
+    print("(*) Interaction Limit: You have exactly 42 interactions.\n"
+          "Each command you enter counts as one interaction. Choose wisely to avoid a premature game over!")
+    print("-----------------")
+    time.sleep(0.5)
+    print("(*) Scoring: Throughout your quest, you'll earn Tbucks by completing side quests. Your prowess in acquiring \n"
+          "Tbucks will determine your final rank: GOLD, SILVER, or BRONZE. \n"
+          "To earn Tbucks, you must engage with the RANDOMLY SPAWNING LIBRARIANG, \n"
+          "either by trading items or by bargaining for a extra Tbucks.")
+    print("-----------------")
+    time.sleep(0.40)
+    print("(*) Final Challenge: In the last room, you are tasked with sorting critical information correctly. \n"
+          "CAREFUL: You only get six attempts to place everything in its right place. Fail, and it's game over.")
+    print("-------------")
+    time.sleep(1)
     s_short = 0.25
     time.sleep(s_short)
     world.locations[0].unlock()
     player.set_location(1, 1)
     print(world.get_location(player.x, player.y).long_description)
+    print("Try type [start] to embark on your adventure: ")
 
     # Testing Librian Trade
     # world.locations[6].unlock()
