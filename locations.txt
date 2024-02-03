@@ -1,17 +1,20 @@
 LOCATION -1
 0
+
 That way is blocked.
 That way is blocked.
 END
 
 LOCATION 0
 0
-short desciption location 0
-long descirpiton locatio 0
+follow squirrel
+short description location 0
+long descirpiton location 0
 END
 
 LOCATION 1
 0
+help,item,inventory,vending,inspect squirrel,inspect,type code,loot,quit,look,move [direction]
 You are in a dimly lit room with a glimmering vending machine as the focal point.
 You find yourself in a dark room, the only source of light emanating from a strangely
 attractive vending machine that glimmers in the corner. The room feels confined,
@@ -23,6 +26,7 @@ END
 
 LOCATION 2
 0
+help,item,inventory,quit,loot,talk,next,look,move [direction]
 You are in a hallway full of paintings in Hart House.
 As you step into the hallway, a surreal silence envelops you.
 The walls are adorned with various paintings, each one seemingly alive in the dim light of dawn.
@@ -32,6 +36,7 @@ END
 
 LOCATION 3
 0
+help,item,inventory,quit,loot,inspect,look,use,move [direction],keep,mount
 You are at the heart of Queen’s Park.
 You wander into the dawn of Queen's Park where trees wear glistening snow like delicate jewels.
 The majestic horse statue stands prominent amidst the tranquil surroundings.
@@ -43,6 +48,7 @@ END
 
 LOCATION 4
 0
+help,item,inventory,quit,loot,look,move [direction],take the elevator,telescope,open box,acquire,read letter
 You are at the infamous McLennan Physics Lab.
 Guided by your trusty horse, you reached a tall 14-story building tucked away in the quiet corner of the campus
 – the McLennan Physics Lab. You remembered that letter covered in stars you've been carrying.
@@ -56,6 +62,7 @@ END
 
 LOCATION 5
 0
+help,item,inventory,quit,loot,look,move [direction],eat,examine
 Sid Smith Cafeteria
 Sid Smith Caesar Sald
 pppp
@@ -63,6 +70,7 @@ END
 
 LOCATION 6
 0
+help,item,inventory,quit,loot,look,move [direction],examine,sort,leave
 You are at MLC
 MLC has a TA
 END

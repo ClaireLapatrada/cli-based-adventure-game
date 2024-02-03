@@ -6,18 +6,22 @@ import json
 
 def handle_location0(com, pl, w):
     """Start location 0's events if it has not been cleared yet, else notify the player."""
-    print("You wake up in your room and see a squirrel outside your window...")
-    print("type 'follow squirrel'")
-    com = input(">> ").strip().lower()
-    while not com.startswith('follow'):
-        print("do you need TYPING LESSSONS")
+    if w.locations[1].unlocked:
+        print("There is nothing interesting in your bedroom. Go touch grass :)")
+    else:
+        print("You wake up in your room and see a squirrel outside your window...")
+        print("type 'follow squirrel'")
         com = input(">> ").strip().lower()
-    print_progress_bar('Following Squirel', duration=3, width=30)
-    w.locations[1].unlock()
-    location_index = w.map[0][1]
-    new_location = w.locations[location_index]
-    player.set_location(0, 1)
-    print(new_location.long_description)
+        while not com.startswith('follow'):
+            print("do you need TYPING LESSSONS")
+            com = input(">> ").strip().lower()
+        print_progress_bar('Following Squirel', duration=3, width=30)
+        w.locations[1].unlock()
+        location_index = w.map[0][1]
+        new_location = w.locations[location_index]
+        print(w.locations)
+        player.set_location(1, 1)
+        print(new_location.long_description)
     return True
 
 
@@ -27,7 +31,9 @@ def handle_location1(com, pl, w):
     global traded
     # Ensure the player interacts with the vending machine first
     # Handle the vending machine puzzle
-    if not w.locations[2].unlocked:
+    if w.locations[2].unlocked:
+        print("There is nothing interesting here anymore")
+    else:
         inp = input('Try inspecting the vending machine: type [vending]: ').strip().lower()
         while "vending" not in inp:
             inp = input('Try inspecting the vending machine by typing [vending], or learn to type!').strip().lower()
@@ -462,35 +468,6 @@ def handle_location6(com, pl, w):
         else:
             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
 
-# def handle_location6(com, pl, w):
-#     """Handle events at the Math Learning Center."""
-#     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
-#     print("Help sort the papers correctly to find the cheat sheet.")
-#
-#     # Check if the cheat sheet has already been found
-#     if 'Cheat Sheet' in [item.name for item in pl.inventory]:
-#         print("You have already found the cheat sheet. No need to sort more papers.")
-#         return True
-#
-#     while True:
-#         inp = input("Type 'sort' to start sorting papers or 'leave' to exit: ").strip().lower()
-#         if inp == 'sort':
-#             success = helper_sort()
-#             if success:
-#                 # Simulate finding the cheat sheet after successful sorting
-#                 cheat_sheet = Item('Cheat Sheet', 0, -1)  # Assuming -1 means it's not tied to a specific location
-#                 pl.acquire(cheat_sheet)
-#                 print("As you sort the papers, you find the cheat sheet hidden among them!")
-#                 return True  # End the location event successfully
-#             else:
-#                 print("Game Over. You sorted the papers incorrectly too many times.")
-#                 return False  # Signal game over or handle it appropriately
-#         elif inp == 'leave':
-#             print("You decide to leave the Math Learning Center.")
-#             return True
-#         else:
-#             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
-
 def helper_sort():
     """A helper function to simulate sorting Taylor Swift songs into the correct album piles."""
     albums_songs = {
@@ -575,7 +552,6 @@ def flip_blackboard(com, pl, w):
     return False
 def handle_librarian_interaction(com, pl, librarian, w):
     """ handle any interaction with the librarian. """
-    # print("you're in a territory with a librarian that can trade with you")
     if com.startswith('loot'):
         # Example trade logic
         print("Trade begins: use command like\n"
@@ -593,6 +569,7 @@ def handle_librarian_interaction(com, pl, librarian, w):
                 player.tbucks += 1
                 print(player.tbucks)
             elif do.startswith('pity'):
+                librarian.pity()
                 print("Libraian: Phew! Thank you for leaving me alone")
                 time.sleep(0.02)
                 print("Type 'look' to keep exploring the room")
@@ -628,6 +605,7 @@ def handle_command(com, pl, w, librarian):
                     # print(pl.x)
                     # print(pl.y)
                     print(new_location.long_description)
+                    w.locations[location_index].visited = True
                 else:
                     print("This location is locked. You can't enter yet.")
             else:
@@ -648,12 +626,13 @@ def handle_command(com, pl, w, librarian):
         return False  # Signal to exit the game loop
 
     elif command == 'help':
-        print("Available commands: move [direction], quit, help, look, press")
+        print(f"Available commands: {world.get_location(pl.x, pl.y).valid_commands}")
     lib_index = w.map[pl.x][pl.y]
     librarian_present = lib_index in librarian.spawn_locations
     # Prioritize librarian interactions if present
 
-    if librarian_present:
+    if librarian_present and not librarian.interacted:
+        print("you're in a territory with a librarian that can trade with you and haven't traded")
         if command.startswith('loot'):
             print("loot librarian")
             handle_librarian_interaction(command, pl, librarian, w)
@@ -747,18 +726,9 @@ if __name__ == "__main__":
 
     s_short = 0.25
     time.sleep(s_short)
-    player.set_location(0, 0)
+    world.locations[0].unlock()
+    player.set_location(1, 1)
     print(world.get_location(player.x, player.y).long_description)
-
-    # Testing Librian Trade
-    world.locations[6].unlock()
-    player.set_location(3, 0)
-    # print(player.x)
-    # print(world.map[player.x][player.y])
-    # print(world.map)
-    # world.locations[2].unlock()
-    # player.set_location(0, 2)
-    # player.inventory +=
 
     continue_game = True
     while continue_game:

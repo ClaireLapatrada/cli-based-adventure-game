@@ -140,6 +140,7 @@ horse_statue_interactions = {
     }
 
 
+
 class Location:
     """A location in our text adventure game world.
 
@@ -152,13 +153,15 @@ class Location:
         -
     """
     #def __init__(self, description: str, items: List[str], exits: Dict[str, int]) -> None:
-    def __init__(self, brief_description: str, long_description: str, points: int, visited: bool, unlocked: bool) -> None:
+    def __init__(self, brief_description: str, long_description: str, points: int, visited: bool, unlocked: bool,
+                 valid_commands: list[str]) -> None:
         self.description = brief_description
         self.long_description = long_description
         self.points = points
         self.items = []
         self.visited = visited
         self.unlocked = unlocked
+        self.valid_commands = valid_commands
 
     def look(self):
         """ print out the description of the location being looked at."""
@@ -241,17 +244,18 @@ class World:
             if lines[i].startswith("LOCATION"):
                 location_number = int(lines[i].split()[1].strip())
                 points = int(lines[i + 1].strip())
-                brief_description = lines[i + 2].strip()
+                valid_commands = lines[i + 2].strip().split(',')
+                brief_description = lines[i + 3].strip()
                 long_description = ""
 
-                i += 3  # Skip to the start of long description
+                i += 4  # Skip to the start of long description
                 while i < len(lines) and lines[i].strip() != "END":
                     long_description += lines[i].strip() + "\n"
                     i += 1
 
                 visited = False
                 unlocked = False
-                location = Location(brief_description, long_description, points, visited, unlocked)
+                location = Location(brief_description, long_description, points, visited, unlocked, valid_commands)
                 locations_list[location_number] = location
 
             i += 1
@@ -291,8 +295,9 @@ class Librarian(Player):
         self.name = name
         self.trade_items = trade_items
         # self.spawn_locations = random.sample(range(2, 7), 3)  # Randomly selects 3 rooms to spawn
-        self.spawn_locations = [1, 2, 3]
+        self.spawn_locations = [4, 2, 3]
         self.spawned_locations = []  # Tracks locations where the NPC has already spawned
+        self.interacted = False
 
     def check_spawn(self, player_location: tuple):
         """ Check and handle spawning of the NPC at the player's current location. """
@@ -314,3 +319,6 @@ class Librarian(Player):
             player.tbucks += item.worth
             player.remove_item(item)
             print(f"{item.name} has been traded | Tbucks balance increased by {item.worth}")
+
+    def pity(self):
+        self.interacted = True
