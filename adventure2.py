@@ -675,6 +675,7 @@ def flip_blackboard(com, pl, w):
 def handle_librarian_interaction(com, pl, librarian, w):
     """ handle any interaction with the librarian. """
     if com.startswith('loot'):
+
         # Example trade logic
         print("Trade begins! Use commands like...\n"
               "[my inventory] : to check your Inventory \n"
@@ -700,7 +701,7 @@ def handle_librarian_interaction(com, pl, librarian, w):
                 print(player.tbucks)
             elif do.startswith('pity'):
                 player.step_counts += 1
-                librarian.pity()
+                librarian.interacted = True #pity()
                 print("Libraian: Phew! Thank you for leaving me alone")
                 time.sleep(0.02)
                 print("Type 'look' to keep exploring the room")
@@ -723,7 +724,7 @@ def handle_command(com, pl, w, librarian):
     Call each location's handle function when current_location_index is updated. Handle all other commands."""
     global max_count
     current_location_index = w.map[pl.x][pl.y]
-    librarian.check_spawn((pl.x, pl.y))
+    #librarian.check_spawn((pl.x, pl.y))
     command_parts = command.split()
 
     if len(command_parts) < 2 and 'move' in command_parts:
@@ -739,9 +740,9 @@ def handle_command(com, pl, w, librarian):
             if move_status == "valid":
                 player.step_counts += 1
                 location_index = w.map[new_x][new_y]
-
                 new_location = w.locations[location_index]
                 if new_location.unlocked:
+                    librarian.interacted = False
                     pl.x, pl.y = new_x, new_y
                     current_location_index = w.map[pl.x][pl.y]
                     print(new_location.long_description)
@@ -775,16 +776,24 @@ def handle_command(com, pl, w, librarian):
             print(world.get_location(pl.x, pl.y).hint)
 
     lib_index = w.map[pl.x][pl.y]
-    librarian_present = lib_index in librarian.spawn_locations
-
-    # Prioritize librarian interactions if present
-
-    if librarian_present and not librarian.interacted:
-        print("You're in a territory with a librarian that can traded. !Must Loot! Type [loot] to interact. ")
-        if command.startswith('loot'):
-            print("loot librarian")
-            handle_librarian_interaction(command, pl, librarian, w)
+    # print("before spawn")
+    # print(lib_index in librarian.spawn_locations)
+    # print(librarian.interacted)
+    # librarian.check_spawn((pl.x, pl.y))
+    # print("after spawn")
+    librarian_present = lib_index in librarian.spawn_locations and not librarian.interacted
+    if librarian_present:
+        print("You're in a territory with a librarian that can trade with you.")
+        if com.startswith('loot'):
+            handle_librarian_interaction(com, pl, librarian, w)
             return True
+    #
+    # if librarian_present and not librarian.interacted:
+    #     print("You're in a territory with a librarian that can traded. !Must Loot! Type [loot] to interact. ")
+    #     if command.startswith('loot'):
+    #         print("loot librarian")
+    #         handle_librarian_interaction(command, pl, librarian, w)
+    #         return True
     if player.step_counts > max_count:
         print("Game Over. The exam started. You didn't make it there on time.")
         return False

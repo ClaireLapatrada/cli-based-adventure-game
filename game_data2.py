@@ -297,16 +297,17 @@ class Librarian(Player):
         self.name = name
         self.trade_items = trade_items
         # self.spawn_locations = random.sample(range(2, 7), 3)  # Randomly selects 3 rooms to spawn
-        self.spawn_locations = [4, 2, 3]
+        self.spawn_locations = [1, 2, 3]
         self.spawned_locations = []  # Tracks locations where the NPC has already spawned
         self.interacted = False
 
     def check_spawn(self, player_location: tuple):
         """ Check and handle spawning of the NPC at the player's current location. """
-        # print(f"Checking Librarian spawn at {player_location}. Spawn locations are {self.spawn_locations}")
+        # Check if the librarian is supposed to spawn at the player's current location and hasn't already spawned there
         if player_location in self.spawn_locations and player_location not in self.spawned_locations:
             self.x, self.y = player_location  # Set NPC location to player location
             self.spawned_locations.append(player_location)
+            self.interacted = False  # Reset interacted to allow a new interaction
             print(f"A Librarian has spawned at location {player_location}... ")
             return True
         return False
