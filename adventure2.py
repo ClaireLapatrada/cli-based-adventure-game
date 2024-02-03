@@ -262,7 +262,6 @@ def horse_statue_go(com, pl, w):
             print("You are not sure what to do with that.")
 
 
-# TODO
 def handle_location4(com, pl, w):
     """Start location 4 events if it has not been cleared yet, else notify the player."""
     if com == 'take the elevator':
@@ -432,6 +431,7 @@ def puzzle_caesar_salad(pl, w):
         else:
             print("\nNothing happens. Perhaps the clues at the bottom of the salad bowl can help.")
 
+
 def handle_location6(com, pl, w):
     """Handle events at the Math Learning Center."""
     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
@@ -490,6 +490,7 @@ def handle_location6(com, pl, w):
 #             return True
 #         else:
 #             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
+
 
 def helper_sort():
     """A helper function to simulate sorting Taylor Swift songs into the correct album piles."""
@@ -573,6 +574,8 @@ def flip_blackboard(com, pl, w):
         print("\nEither way, you feel prepared and ready for the test. Goodbye!")
 
     return False
+
+
 def handle_librarian_interaction(com, pl, librarian, w):
     """ handle any interaction with the librarian. """
     # print("you're in a territory with a librarian that can trade with you")
@@ -648,7 +651,7 @@ def handle_command(com, pl, w, librarian):
         return False  # Signal to exit the game loop
 
     elif command == 'help':
-        print("Available commands: move [direction], quit, help, look, press")
+        print(f"Available commands: {world.get_location(pl.x,pl.y).valid_commands}")
     lib_index = w.map[pl.x][pl.y]
     librarian_present = lib_index in librarian.spawn_locations
     # Prioritize librarian interactions if present
@@ -747,12 +750,14 @@ if __name__ == "__main__":
 
     s_short = 0.25
     time.sleep(s_short)
+    world.locations[0].unlock()
     player.set_location(0, 0)
     print(world.get_location(player.x, player.y).long_description)
 
     # Testing Librian Trade
-    world.locations[6].unlock()
-    player.set_location(3, 0)
+    # world.locations[6].unlock()
+    # player.set_location(3, 0)
+
     # print(player.x)
     # print(world.map[player.x][player.y])
     # print(world.map)
