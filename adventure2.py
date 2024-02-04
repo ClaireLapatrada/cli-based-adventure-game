@@ -676,12 +676,10 @@ def handle_librarian_interaction(com, pl, librarian, w):
                 librarian.trade_for_bucks(pl, item)
             elif do == 'my' and item == 'inventory':
                 player.show_inventory()
-            elif do.startswith('drop'):
-                player.step_counts += 1
-                print("drop logic #TODO")
             elif do.startswith('bargain'):
+                player.step_counts += 1
                 librarian.bargain(player)
-                print(player.tbucks)
+                print("--warning: You are using up your available moves by bargaining!")
             elif do.startswith('stop'):
                 player.step_counts += 1
                 librarian.interacted = True # pity()
@@ -859,7 +857,7 @@ def print_rules():
           "3. TCard \n"
           "Your mission is to navigate the world and 'acquire' these items in your inventory before the test begins.")
     print("-----------------")
-    inp = input("Press [enter] to continue")
+    inp = input("Press [enter] to continue ")
     print("-----------------")
     print("(*) General Commands:\n"
           "[quit]: Exit the game \n"
@@ -873,14 +871,14 @@ def print_rules():
           "[score]: Show player's current amount of Tbucks (score) \n"
           "Notes: Some commands are not available while solving specific puzzles.")
     print("-----------------")
-    inp = input("Press [enter] to continue")
+    inp = input("Press [enter] to continue ")
     print("-----------------")
     print("(*) Interaction Limit: You have exactly 42 interactions.\n"
           "Each valid command you enter except the General Commands (see above), some event interactions, \n"
           "and input to the Final Challenge counts as one interaction. Choose wisely to avoid a premature game over! \n"
           "You can type 'help' to see the valid commands in each location.")
     print("-----------------")
-    inp = input("Press [enter] to continue")
+    inp = input("Press [enter] to continue ")
     print("-----------------")
     print(
         "(*) Scoring: Throughout your quest, you'll earn Tbucks by completing side quests. Your prowess in acquiring \n"
@@ -888,7 +886,7 @@ def print_rules():
         "To earn Tbucks, you must engage with the RANDOMLY SPAWNING LIBRARIANS, \n"
         "either by trading items or by bargaining for a extra Tbucks.")
     print("-----------------")
-    inp = input("Press [enter] to continue")
+    inp = input("Press [enter] to continue ")
     print("-----------------")
     print("(*) Final Challenge: In the last room, you are tasked with sorting critical information correctly. \n"
           "CAREFUL: You only get six attempts to place everything in its right place. Fail, and it's game over.")
