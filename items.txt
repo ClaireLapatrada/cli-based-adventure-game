@@ -1,4 +1,4 @@
-1 1 500 Acorn
+1 1 -1 Acorn
 1 1 250 Almond
 1 1 175 Peanut
 1 1 120 Cashew
@@ -6,5 +6,10 @@
 1 3 -1 Horse Shoe
 1 0 -1 Tcard
 3 0 500 Letter
+3 0 150 Hydroflask
+3 0 100 Laptop Charger
+3 0 200 MAT137 Problem Set 6 Solution
+3 0 120 Chirly the bird
+3 0 50 Banana
 4 0 -1 Lucky Pen
-5 0 -1 Cheatsheet
+6 0 -1 Cheatsheet

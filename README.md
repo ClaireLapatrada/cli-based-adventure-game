@@ -16,9 +16,7 @@ Welcome to the University of Toronto's St. George campus, where your wit is test
 
 ## TODO
 - .tex writing
-- save and load
-- fuck around
-- claire and github is a prompram
+- clean up
 
 ## ANNOYING ERROS
 - some designs are very stuck

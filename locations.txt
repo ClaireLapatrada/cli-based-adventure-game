@@ -16,7 +16,7 @@ END
 
 LOCATION 1
 0
-help,item,inventory,vending,inspect squirrel,inspect,type code,loot,quit,look,move,interaction,hint,item
+help,item,inventory,vending,inspect squirrel,inspect,type code,loot,quit,look,go,interaction,hint,item,score
 You are in a dimly lit room with a glimmering vending machine as the focal point.
 You find yourself in a dark room, the only source of light emanating from a strangely
 attractive VENDING MACHINE that glimmers in the corner. The door you entered through now seems permanently locked,
@@ -27,7 +27,7 @@ END
 
 LOCATION 2
 0
-help,item,inventory,quit,loot,talk,next,look,move,interaction,hint,item
+help,item,inventory,quit,loot,talk,next,look,go,interaction,hint,item,score
 You are in a hallway full of portrait paintings in Hart House. Have you [talk]ed to them yet?
 As you step into the hallway, a surreal silence envelops you.
 The walls are adorned with various paintings, each one seemingly alive in the dim light of dawn.
@@ -37,32 +37,30 @@ END
 
 LOCATION 3
 0
-help,item,inventory,quit,loot,inspect,look,use,move,keep,mount,interaction,hint,item
+help,item,inventory,quit,loot,inspect,look,use,go,keep,mount,interaction,hint,item,score
 You are at the heart of Queen’s Park.
 You wander into the dawn of Queen's Park where trees wear glistening snow like delicate jewels.
 The majestic horse statue stands prominent amidst the tranquil surroundings.
 You sensed a bond with the horse statue, as if it possessed an intriguing allure that drew you in.
 It felt as though the gaze of the horse statue locked onto yours,
 establishing a silent connection between you and the majestic sculpture.
-Maybe you should look around the statue. What might the horse statue be seeking from you?
+Maybe you should [inspect] around the statue. What might the horse statue be seeking from you?
 END
 
 LOCATION 4
 0
-help,item,inventory,quit,loot,look,move,take the elevator,telescope,open box,acquire,read letter,interaction,hint,item
+help,item,inventory,quit,loot,look,go,take the elevator,telescope,open box,acquire,read letter,interaction,hint,item,score
 You are at the infamous McLennan Physics Lab.
 Guided by your trusty horse, you reached a tall 14-story building tucked away in the quiet corner of the campus
-– the McLennan Physics Lab. You remembered that letter covered in stars you've been carrying.
-It felt like the right time to see if it had any clues. As you entered,
-the massive doors hinted at the mysteries inside. The night held promise,
+– the McLennan Physics Lab. As you entered, the massive doors hinted at the mysteries inside. The night held promise,
 and maybe those words on the letter had something to reveal in the quiet halls of the McLennan Physics Lab.
 Oh, there's a telescope on the rooftop of McLennan. Does it have something to do with the letter?
-Maybe let's TAKE THE ELEVATOR on the right.
+Maybe let's [take the elevator] on the right, perhaps to the top floor?
 END
 
 LOCATION 5
 0
-help,item,inventory,quit,loot,look,move,eat,examine,interaction,hint,item
+help,item,inventory,quit,loot,look,go,eat,examine,interaction,hint,item,score
 Sid Smith Cafeteria
 Sid Smith Caesar Salad
 pppp
@@ -70,7 +68,13 @@ END
 
 LOCATION 6
 0
-help,item,inventory,quit,loot,look,move,examine,sort,leave,interaction,hint,item
+help,item,inventory,quit,loot,look,go,examine,sort,leave,interaction,hint,item,score
 You are at MLC
 MLC has a TA
 END
+
+LOCATION 7
+0
+None
+Out of Bound
+Out of Bound
