@@ -661,11 +661,11 @@ def handle_librarian_interaction(com, pl, librarian, w):
     if com.startswith('loot'):
 
         # Example trade logic
-        print("Trade begins! Use commands like...\n"
+        print("Trade begins! Use commands like... \n"
               "[my inventory] : to check your Inventory \n"
-              "[trade] : trade unused item for T-bucks, drop: to drop items \n"
-              "[bargain for more] : to ask nicely for MORE T-bucks]\n"
-              "[stop trade] : to Exit and leave librarian alone\n "
+              "[trade] : trade unused item for T-bucks \n"
+              "[bargain for more] : to ask nicely for MORE T-bucks \n"
+              "[stop trade] : to Exit and leave librarian alone \n "
               "WARNING: after [stop] you cannot loot this poor soul again")
     while True:
         inp = input(">> ").strip().lower()
