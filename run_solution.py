@@ -1,10 +1,9 @@
+""" Run through the game with two solutions (solution.txt and gameover.txt)."""
 import sys
 import subprocess
 
-
-print('help')
-p = subprocess.getoutput("{} ./adventure.py < solution.txt".format(sys.executable))
-p2 = subprocess.getoutput("{} ./adventure.py < game_over.txt".format(sys.executable))
-print(p)
+solution = subprocess.getoutput("{} ./adventure.py < solution.txt".format(sys.executable))
+gameover = subprocess.getoutput("{} ./adventure.py < game_over.txt".format(sys.executable))
+print(solution)
 print("----")
-print(p2)
+print(gameover)

@@ -6,14 +6,19 @@ inspect vending
 vending
 type code
 acorn
+inventory
 inspect squirrel
 trade acorn
+inventory
 go east
 loot
 trade peanut
+inventory
 bargain for more
 trade cashew
+inventory
 stop trade
+score
 look
 talk
 next
@@ -29,12 +34,15 @@ go south
 loot
 my inventory
 trade tcard
+inventory
 stop trade
 look
 inspect
 use horse shoe
+inventory
 inspect
 keep
+inventory
 mount
 take the elevator
 2
@@ -43,6 +51,7 @@ telescope
 open box
 697655
 acquire
+inventory
 go north
 chef's salad
 caesar salad
@@ -61,6 +70,5 @@ sort
 2
 1
 acquire
+inventory
 yes
-
-

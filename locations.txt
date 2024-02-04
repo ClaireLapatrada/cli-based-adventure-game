@@ -71,7 +71,7 @@ LOCATION 6
 help,item,inventory,quit,loot,look,go,examine,sort,leave,interaction,hint,item,score
 Upon entering the Math Learning Center, you're greeted by a frazzled research assistant in need of help with sorting papers.
 Stepping in the MLC you are greeted by a visibly stressed research assistant stands before a mountain of unsorted papers,
-despair evident in their eyes.Offering a deal, they promise any "unusual" finds can be yours if you help sort out this mess.
+despair evident in their eyes. Offering a deal, they promise any "unusual" finds can be yours if you help sort out this mess.
 Maybe your cheat sheet is hidden in the mess.
 END
 
