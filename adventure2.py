@@ -313,7 +313,7 @@ def horse_statue_go(com, pl, w):
             player.step_counts += 1
             world.locations[4].unlock()
             print("Weee let's go!")
-            print_progress_bar("riding the horse", duration=5, width=30)
+            print_progress_bar("riding the horse 🐴", duration=5, width=30)
             location_index = world.map[4][1]
             new_location = world.locations[location_index]
             player.set_location(4, 1)
@@ -482,7 +482,7 @@ def handle_location5(com, pl, w):
 
         # Simulate eating with a progress bar
         print("You start eating the salad...")
-        print_progress_bar("Eating", duration=5, width=30)
+        print_progress_bar("Eating 🥗", duration=5, width=30)
         player.step_counts += 1
 
         # After eating, reveal the engraving
@@ -552,6 +552,8 @@ def handle_location6(com, pl, w):
                 # Simulate finding the cheat sheet after successful sorting
                 for item in world.get_location(player.x, player.y).items:
                     player.acquire(item)
+                player.tbucks += 500
+                print(f"\n-- You have been gifted 500 Tbucks for obtaining the required item -- \n")
                 print("As you sort the papers, you find the cheat sheet hidden among them!")
                 # Call to flip blackboard after finding the cheat sheet
                 flip_blackboard(com, pl, w)
@@ -621,10 +623,6 @@ def helper_sort():
                 print("Please enter a valid number.")
             except KeyError:
                 print("Invalid album choice. Please try again.")
-    for item in world.get_location(player.x, player.y).items:
-        player.acquire(item)
-        player.tbucks += 500
-    print(f"\n-- You have been gifted 500 Tbucks for obtaining the required item -- \n")
     return True
 
 
@@ -647,7 +645,7 @@ def flip_blackboard(com, pl, w):
         player.step_counts += 1
         print("==========================================================================================")
         print("\nYou have successfully acquired all necessary items. Well done. Best of luck on the test.")
-        print("\n-- Remember, it's the friends we made along the way that truly matter. --")
+        print("\nRemember, it's the friends we made along the way that truly matter.")
         print("\nThank you for playing. Goodbye! \n")
         print("==========================================================================================")
     else:
@@ -854,13 +852,15 @@ def load_game(player, world, file_name='savegame.txt'):
 
 def print_rules():
     """ Print the game's starting screen."""
+    print("-----------------")
     print("Game Objective: It's the morning of a big test, and you realize you've lost your three essential items: \n"
           "1. Your Lucky pen\n"
           "2. Cheat Sheet\n"
           "3. TCard \n"
           "Your mission is to navigate the world and 'acquire' these items in your inventory before the test begins.")
     print("-----------------")
-    time.sleep(0.5)
+    inp = input("Press [enter] to continue")
+    print("-----------------")
     print("(*) General Commands:\n"
           "[quit]: Exit the game \n"
           "[go [direction]]: Move player in the specified direction \n"
@@ -873,23 +873,28 @@ def print_rules():
           "[score]: Show player's current amount of Tbucks (score) \n"
           "Notes: Some commands are not available while solving specific puzzles.")
     print("-----------------")
-    time.sleep(0.6)
+    inp = input("Press [enter] to continue")
+    print("-----------------")
     print("(*) Interaction Limit: You have exactly 42 interactions.\n"
           "Each valid command you enter except the General Commands (see above), some event interactions, \n"
           "and input to the Final Challenge counts as one interaction. Choose wisely to avoid a premature game over! \n"
           "You can type 'help' to see the valid commands in each location.")
     print("-----------------")
-    time.sleep(0.5)
+    inp = input("Press [enter] to continue")
+    print("-----------------")
     print(
         "(*) Scoring: Throughout your quest, you'll earn Tbucks by completing side quests. Your prowess in acquiring \n"
         "Tbucks will determine your final rank: GOLD, SILVER, or BRONZE. \n"
         "To earn Tbucks, you must engage with the RANDOMLY SPAWNING LIBRARIANS, \n"
         "either by trading items or by bargaining for a extra Tbucks.")
     print("-----------------")
-    time.sleep(0.40)
+    inp = input("Press [enter] to continue")
+    print("-----------------")
     print("(*) Final Challenge: In the last room, you are tasked with sorting critical information correctly. \n"
           "CAREFUL: You only get six attempts to place everything in its right place. Fail, and it's game over.")
     print("-------------")
+    inp = input("Press [enter] to start the game")
+    print("-----------------")
 
 
 def wrapper():
@@ -898,7 +903,7 @@ def wrapper():
     all_items = [item for loc in world.locations for item in world.locations[loc].items]
     all_worth = sum([item.worth for item in all_items if item.worth > 0])
     all_worth += 1500 # the three required items (500 each)
-    missed = [item for item in player.inventory if item.name.lower() not in ['tcard', 'cheat sheet', 'lucky pen']]
+    missed = [item for item in player.inventory if item.name.lower() not in ['tcard', 'cheatsheet', 'lucky pen']]
     if tbucks >= 3000:
         rank = "Gold"
     elif 2000 <= tbucks < 3000:
