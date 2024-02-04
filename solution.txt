@@ -1,0 +1,66 @@
+read rules
+start
+follow squirrel
+look
+inspect vending
+vending
+type code
+acorn
+inspect squirrel
+trade acorn
+go east
+loot
+trade peanut
+bargain for more
+trade cashew
+stop trade
+look
+talk
+next
+next
+next
+next
+next
+next
+next
+secret
+interaction
+go south
+loot
+my inventory
+trade tcard
+stop trade
+look
+inspect
+use horse shoe
+inspect
+keep
+mount
+take the elevator
+2
+14
+telescope
+open box
+697655
+acquire
+go north
+chef's salad
+caesar salad
+eat
+examine
+kja
+mlc
+go west
+go north
+sort
+5
+6
+4
+3
+2
+2
+1
+acquire
+yes
+
+

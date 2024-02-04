@@ -306,7 +306,8 @@ def horse_statue_read(com, pl, w):
 def horse_statue_go(com, pl, w):
     """Ask user for the correct command, print progress bar for riding the horse,
     unlock and update new location as arrived. Print new location description. Handle all other commands."""
-    print("Great! Now we have so many items. Oh wait.. The horse statue is moving!? To where? Let's [mount] on to see.")
+    print("Amazing! The horse gave you extra items from its saddle bag - kept for trading later!\n"
+          "Oh wait.. The horse statue is moving!? To where? Let's [mount] on to see.")
     while True:
         inp = input(">> ").strip().lower()
         if inp == 'mount':
@@ -406,7 +407,7 @@ def stars_puzzle(com, pl, w):
             # Check the solution after the animation
             if user_input == solution:
                 # Animation for revealing each letter
-
+                print("\nYes! Each number corresponds to the length of each Star's name!")
                 print("\nThe box clicks open, you find a magic looking pen in it.")
                 inp = input("Type 'acquire' to add the lucky pen to your inventory: ").strip().lower()
                 while inp != 'acquire':
@@ -417,7 +418,7 @@ def stars_puzzle(com, pl, w):
                     player.tbucks += 500
                     print(f"-- You have been gifted 500 Tbucks for obtaining the required item -- \n")
                 print("That took quite a lot of energy. It's time to refuel yourself up. "
-                      "Let's head to the closest cafeteria.")
+                      "Let's [go] to the closest cafeteria.")
                 world.locations[5].unlock()
                 return True
             else:
@@ -476,9 +477,8 @@ def handle_location5(com, pl, w):
 
         # Eat interaction
         eat_action = input("What will you do with the salad? (Hint: eat): ").strip().lower()
-        if eat_action != "eat":
-            print("What are you gonna do, BREATHE it?")
-            return True
+        while eat_action != "eat":
+            eat_action = input("Try again! Comsume the salad. : ").strip().lower()
 
         # Simulate eating with a progress bar
         print("You start eating the salad...")
@@ -489,12 +489,14 @@ def handle_location5(com, pl, w):
         print("As you finish your salad, you notice a small engraving at the bottom of the bowl: 'KJA'")
 
         # Puzzle interaction
-        puzzle_input = input("Do you examine the engraving? (Hint: examine): ").strip().lower()
+        puzzle_input = input("Try take a closer look at the engraving ").strip().lower()
+        while puzzle_input!= "examine":
+            puzzle_input = input("Try [examine] the engraving ")
         if puzzle_input == "examine":
             player.step_counts += 1
             puzzle_caesar_salad(pl, w)
         else:
-            print("You decide not to examine the engraving. Maybe next time.")
+            print("You decide not to examine the engraving, what?")
 
     return True
 
@@ -526,7 +528,7 @@ def puzzle_caesar_salad(pl, w):
 
         # Check the solution
         if user_input == solution:
-            print("\nThe pink portal opens up, revealing a new path ahead.")
+            print("\nThe pink portal opens up, revealing a new path ahead. Let's [go] out!")
             w.locations[6].unlock()
             return True
         else:
@@ -544,18 +546,23 @@ def handle_location6(com, pl, w):
         return True
 
     while True:
-        inp = input("Type 'sort' to start sorting papers or 'leave' to exit: ").strip().lower()
+        inp = input("Type 'sort' to start sorting papers: ").strip().lower()
         if inp == 'sort':
             player.step_counts += 1
             success = helper_sort()
             if success:
+                print("Sort CHEATSHEET into the correct album pile: [1: Fearless, 2: 1989, 3: Rep., 4: Folklore, 5: Lover, 6: Red]\n")
+                get_cheat_sheet = ("Wait! Is that an unusual spotting! [acquire] the item before it gets lost again ")
+                while get_cheat_sheet != 'acquire':
+                    get_cheat_sheet = input("Try again! [acquire] it before it gets lost in the midst of MLC.")
                 # Simulate finding the cheat sheet after successful sorting
                 for item in world.get_location(player.x, player.y).items:
                     player.acquire(item)
                 player.tbucks += 500
                 print(f"\n-- You have been gifted 500 Tbucks for obtaining the required item -- \n")
-                print("As you sort the papers, you find the cheat sheet hidden among them!")
+                #print("As you sort the papers, you find the cheat sheet hidden among them!")
                 # Call to flip blackboard after finding the cheat sheet
+                print("--------------------------------------------")
                 flip_blackboard(com, pl, w)
                 return False  # End the location event and game
             else:
@@ -573,17 +580,17 @@ def handle_location6(com, pl, w):
             print(f"Available items here: {[item.name for item in world.get_location(player.x, player.y).items]}")
         elif inp == 'score':
             print(f"You currently have {player.tbucks} Tbucks. Trade with the librarian for to obtain more.")
-        elif inp == 'leave':
-            print("You decide to leave the Math Learning Center.")
-            return True  # Player decides to leave without sorting
+        # elif inp == 'leave':
+        #     print("You decide to leave the Math Learning Center.")
+        #     return True  # Player decides to leave without sorting
         else:
-            print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
+            print("Invalid command. Please type 'sort' to help:")
 
 def helper_sort():
     """A helper function to simulate sorting Taylor Swift songs into the correct album piles."""
     albums_songs = {
         'Lover': 'Lover',
-        'All Too Well (Taylor’s Version) (From The Vault)': 'Red (Taylor’s Version)',
+        'All Too Well (From The Vault)': 'Red (Taylor’s Version)',
         'Cardigan': 'Folklore',
         'Look What You Made Me Do': 'Reputation',
         'Wildest Dreams': '1989',
@@ -608,7 +615,7 @@ def helper_sort():
 
     for song, correct_album in albums_songs.items():
         while True:
-            print(f"\nSort the song '{song}' into the correct album pile: [1, 2, 3, 4, 5, 6]")
+            print(f"\nSort the song '{song}' into the correct album pile: [1: Fearless, 2: 1989, 3: Rep., 4: Folklore, 5: Lover, 6: Red]")
             try:
                 inp = int(input("Pile number: "))
                 if albums[correct_album] == inp:
@@ -643,7 +650,7 @@ def flip_blackboard(com, pl, w):
 
     if flip == "yes":
         player.step_counts += 1
-        print("==========================================================================================")
+        print("\n==========================================================================================")
         print("\nYou have successfully acquired all necessary items. Well done. Best of luck on the test.")
         print("\nRemember, it's the friends we made along the way that truly matter.")
         print("\nThank you for playing. Goodbye! \n")
@@ -856,8 +863,8 @@ def print_rules():
           "2. Cheat Sheet\n"
           "3. TCard \n"
           "Your mission is to navigate the world and 'acquire' these items in your inventory before the test begins.")
-    print("-----------------")
-    inp = input("Press [enter] to continue ")
+    # print("-----------------")
+    # inp = input("Press [enter] to continue ")
     print("-----------------")
     print("(*) General Commands:\n"
           "[quit]: Exit the game \n"
@@ -871,28 +878,28 @@ def print_rules():
           "[score]: Show player's current amount of Tbucks (score) \n"
           "Notes: Some commands are not available while solving specific puzzles.")
     print("-----------------")
-    inp = input("Press [enter] to continue ")
-    print("-----------------")
+    # inp = input("Press [enter] to continue ")
+    # print("-----------------")
     print("(*) Interaction Limit: You have exactly 42 interactions.\n"
           "Each valid command you enter except the General Commands (see above), some event interactions, \n"
           "and input to the Final Challenge counts as one interaction. Choose wisely to avoid a premature game over! \n"
           "You can type 'help' to see the valid commands in each location.")
     print("-----------------")
-    inp = input("Press [enter] to continue ")
-    print("-----------------")
+    # inp = input("Press [enter] to continue ")
+    # print("-----------------")
     print(
         "(*) Scoring: Throughout your quest, you'll earn Tbucks by completing side quests. Your prowess in acquiring \n"
         "Tbucks will determine your final rank: GOLD, SILVER, or BRONZE. \n"
         "To earn Tbucks, you must engage with the RANDOMLY SPAWNING LIBRARIANS, \n"
         "either by trading items or by bargaining for a extra Tbucks.")
-    print("-----------------")
-    inp = input("Press [enter] to continue ")
+    # print("-----------------")
+    # inp = input("Press [enter] to continue ")
     print("-----------------")
     print("(*) Final Challenge: In the last room, you are tasked with sorting critical information correctly. \n"
           "CAREFUL: You only get six attempts to place everything in its right place. Fail, and it's game over.")
     print("-------------")
-    inp = input("Press [enter] to start the game")
-    print("-----------------")
+    # inp = input("Press [enter] to start the game")
+    # print("-----------------")
 
 
 def determine_rank(dollars, moves, max_dollars, max_moves):

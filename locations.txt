@@ -38,7 +38,7 @@ END
 LOCATION 3
 0
 help,item,inventory,quit,loot,inspect,look,use,go,keep,mount,interaction,hint,item,score
-You are at the heart of Queen’s Park.
+You are at the heart of Queen’s Park looking up at the horse statue. Try [inspect]ing to find out more.
 You wander into the dawn of Queen's Park where trees wear glistening snow like delicate jewels.
 The majestic horse statue stands prominent amidst the tranquil surroundings.
 You sensed a bond with the horse statue, as if it possessed an intriguing allure that drew you in.
@@ -61,16 +61,18 @@ END
 LOCATION 5
 0
 help,item,inventory,quit,loot,look,go,eat,examine,interaction,hint,item,score
-Sid Smith Cafeteria
-Sid Smith Caesar Salad
-pppp
+The salad shop TwoGreens is the apple of your eyes in the middle of busy Sid Smith.
+The bustling heart of student life, Sid Smith Cafeteria is a haven for hungry minds.
+Amidst the tables, a salad bar named TwoGreens stands out, offering a peculiar selection that catches your eye.
 END
 
 LOCATION 6
 0
 help,item,inventory,quit,loot,look,go,examine,sort,leave,interaction,hint,item,score
-You are at MLC
-MLC has a TA
+Upon entering the Math Learning Center, you're greeted by a frazzled research assistant in need of help with sorting papers.
+Stepping in the MLC you are greeted by a visibly stressed research assistant stands before a mountain of unsorted papers,
+despair evident in their eyes.Offering a deal, they promise any "unusual" finds can be yours if you help sort out this mess.
+Maybe your cheat sheet is hidden in the mess.
 END
 
 LOCATION 7
