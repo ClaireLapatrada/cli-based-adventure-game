@@ -1,198 +1,192 @@
-"""CSC111 Project 1: Text Adventure Game Classes
-
-Instructions (READ THIS FIRST!)
-===============================
-
-This Python module contains the main classes for Project 1, to be imported and used by
- the `adventure` module.
- Please consult the project handout for instructions and details.
-
-Copyright and Usage Information
-===============================
-
-This file is provided solely for the personal and private use of students
-taking CSC111 at the University of Toronto St. George campus. All forms of
-distribution of this code, whether as given or with any changes, are
-expressly prohibited. For more information on copyright for CSC111 materials,
-please consult our Course Syllabus.
-
-This file is Copyright (c) 2024 CSC111 Teaching Team
-"""
+""" game_data.py """
 from typing import Optional, TextIO, Dict, List
+import random
 
+
+class Player:
+    """
+    A Player in the text adventure game.
+
+    Instance Attributes:
+        - self.x: player's location (row) in relation to map.txt
+        - self.y: player's location (column) in relation to map.txt
+        - self.inventory: items that player currently holds
+        - self.tbucks: the amount of tbucks player currently has earned
+        - self.step_counts = the amont of steps player has taken thoughout the game
+
+    Representation Invariants:
+        - self.x >= 0 and self.x <= 4
+        - self.u >= 0 and self.y <= 5
+        - self.inventory == [] or all([type(item) == Item for item in self.inventory])
+        - self.tbucks >= 0
+    """
+    def __init__(self, x: int, y: int) -> None:
+        """ Initializes a new Player at position (x, y)."""
+        self.x = x
+        self.y = y
+        self.inventory = []
+        self.tbucks = 0
+        self.step_counts = 0
+        self.victory = False
+
+    def move(self, direction: str, world_map: list[list[int]]) -> (str, int, int):
+        """ Change player's location based on the input cardinal direction.
+        Return "valid" and new location if the move is valid,
+        and return "invalid" and current location otherwise. """
+        new_x, new_y = self.x, self.y
+
+        if direction == 'north':
+            new_x -= 1
+        elif direction == 'south':
+            new_x += 1
+        elif direction == 'east':
+            new_y += 1
+        elif direction == 'west':
+            new_y -= 1
+        if 0 <= new_x < len(world_map) and 0 <= new_y < len(world_map[0]):
+            return ("valid", new_x, new_y)
+        else:
+            return ("invalid", self.x, self.y)
+
+    def set_location(self, x: int, y: int):
+        """ set location of the player to the input location (x,y) in relation to the map in map.txt."""
+        self.x = x
+        self.y = y
+
+    def acquire(self, item):
+        """Acquire the item, or add the item to player's inventory"""
+        print(f" -- {item.name} has been acquired! Type 'inventory' to see. -- ")
+        self.inventory.append(item)
+
+    def show_inventory(self):
+        """Show player's entire inventory."""
+        if not self.inventory:
+            print("Your inventory is empty.")
+        else:
+            print("Inventory:")
+            for item in self.inventory:
+                print(f"- {item.name}")
+
+    def use_item(self, item):
+        """Use the item and remove it from the player's inventory"""
+        print(f" -- {item.name} has been used. --")
+        self.inventory.remove(item)
+
+    def remove_item(self, item):
+        """remove item from player's inventory"""
+        self.inventory.remove(item)
+
+    def check_use_item(self, item: str, location_index: int, action: Optional = None, *args):
+        """Check if item can be used and use it if it is valid."""
+
+        items = [it for it in self.inventory if it.name.strip().lower() == item.strip().lower()]
+        if len(items) == 0:
+            print("You don't have that item.")
+            return False
+        else:
+            item = items[0]
+            if item.in_location(self, location_index):
+                if item.in_inventory(self):
+                    self.use_item(item)
+                    if action:
+                        action(*args)
+                        return True
+                else:
+                    print("You don't have that item yet. Come back again when you have it.")
+                    return False
+            else:
+                if item.in_inventory(self):
+                    print("This item cannot be used here.")
+                    return False
+                else:
+                    print("You don't have that item.")
+
+
+class Item:
+    """
+        Item class that contains information about the item's name, trading worth, and its usable location.
+
+        Instance Attributes:
+            - self.name: name of item
+            - self.worth: how much an item if worth upon trade | -1 means item cannot be traded
+            - self.usable_location: location where item can be used
+        Representation Invariants:
+            - len(self.name) >= 0
+            - self.worth >= 0 or self.worth == -1
+        """
+    def __init__(self, name: str, worth: int, usable_location: int = None) -> None:
+        """Initialize a new item."""
+        self.name = name
+        self.worth = worth
+        self.usable_location = usable_location
+
+    def in_inventory(self, player: Player):
+        """check if the input item is in player's inventory"""
+        return self.name in [i.name for i in player.inventory]
+
+    def in_location(self, player: Player, loc_index: int):
+        """check if item is called to use in the correct location."""
+        return loc_index == self.usable_location
 
 class Location:
     """A location in our text adventure game world.
 
     Instance Attributes:
-        -
-        - descriptions:
-        - return:
+        - self.description: brief description of the location
+        - self.long_description: long description of the location
+        - self.points: points that could be earned in a location
+        - self.items: items loaded within the location
+        - self.visited: whether the player has visited the location
+        - self.unlocked: whether the location has been unlocked for the player to access
+        - self.valid_commands = the commands that can be used in this specifc locatio
+        - self.hint: hints for the puzzle within this specific location
 
     Representation Invariants:
-        -
+        - len(self.description) >= 0
+        - len(self.long_description) >= 0
+        - self.points >= 0
     """
-    #def __init__(self, description: str, items: List[str], exits: Dict[str, int]) -> None:
-    def __init__(self, brief_description: str, long_description: str, points: int) -> None:
-        """Initialize a new location.
-
-        # TODO Add more details here about the initialization if needed
-        """
-
-        # NOTES:
-        # Data that could be associated with each Location object:
-        # a position in the world map,
-        # a brief description,
-        # a long description,
-        # a list of available commands/directions to move,
-        # items that are available in the location,
-        # and whether the location has been visited before.
-        # Store these as you see fit, using appropriate data types.
-        #
-        # This is just a suggested starter class for Location.
-        # You may change/add parameters and the data available for each Location object as you see fit.
-        #
-        # The only thing you must NOT change is the name of this class: Location.
-        # All locations in your game MUST be represented as an instance of this class.
+    def __init__(self, brief_description: str, long_description: str, points: int, visited: bool, unlocked: bool,
+                 valid_commands: list[str], hint: str) -> None:
         self.description = brief_description
         self.long_description = long_description
-        self.available_actions =
         self.points = points
-
-        # self.items = items
-        # self.exits = exits
-        # self.visited = False
+        self.items = []
+        self.visited = visited
+        self.unlocked = unlocked
+        self.valid_commands = valid_commands
+        self.hint = hint
 
     def look(self):
+        """ print out the description of the location being looked at."""
         return self.description
-    #   if not self.visited else "You are back in the room."
-    def available_actions(self):
-        """
-        Return the available actions in this location.
-        The actions should depend on the items available in the location
-        and the x,y position of this location on the world map.
-        """
 
-        # NOTE: This is just a suggested method
-        # i.e. You may remove/modify/rename this as you like, and complete the
-        # function header (e.g. add in parameters, complete the type contract) as needed
-        actions = ["look", "pick up [item]", "go [direction]"]
-        return actions
+    def add_item(self, item: Item):
+        """Add an item to this location."""
+        self.items.append(item)
 
+    def available_objects(self):
+        """Print out all items in this location."""
+        for item in self.items:
+            print(item.name)
 
-class Player:
-    """
-    A Player in the text advanture game.
-
-    Instance Attributes:
-        - # TODO
-
-    Representation Invariants:
-        - # TODO
-    """
-
-    def __init__(self, x: int, y: int) -> None:
-        """
-        Initializes a new Player at position (x, y).
-        """
-
-        # NOTES:
-        # This is a suggested starter class for Player.
-        # You may change these parameters and the data available for the Player object as you see fit.
-
-        self.x = x
-        self.y = y
-        self.inventory = []
-        self.victory = False
-    def move(self, direction: str):
-        pass
-
-    # def move(self, direction: str, world: World):
-    #     if direction in world.map[self.x][self.y].exits:
-    #         new_x, new_y = world.map[self.x][self.y].exits[direction]
-    #         self.x, self.y = new_x, new_y
-    #     else:
-    #         print("You can't go that way.")
-    def set_location(self, x: int, y: int):
-        self.x = x
-        self.y = x
-
-
-class Item:
-    def __init__(self, name: str, interactions: dict = None) -> None:
-        """Initialize a new item." ""
-        self.name = name
-        if interactions is None:
-            interactions = {}
-        self.interactions = interactions
-        pass
-        """
-        self.name = name
-        self.interactions = interactions
-
-    def press(self):
-        """Perform an action with this item based on its type and the action provided."""
-        if self.name == "Vending Machine":
-            print("vending machine")
-            self.acorn_vending()
-        elif self.name == "Squirrel":
-            print("Ouch you cannot hurt the Squirrel")
-        else:
-            print(f"The action '{action}' is not available for {self.name}.")
-
-    def acorn_vending(self):
-        password = input('Press')
-        while password != 'abc':
-            password = input('put in pin pad')
-        print('successful')
-
-    def show_inventory(self, player: Player):
-        """Show player's entire inventory."""
-        print("Inventory:")
-        for item in player.inventory:
-            print(f"- {item.name}: {item.description}")
-
-    def next_painting(self, current: int = -1):
-        """Move to the next paintings"""
-        paintings = ["Painting 1 Clue", "Painting 2 Clue", "Painting 3 Clue", "Painting 4 Clue", "Painting 5 Clue"]
-        print(paintings[current + 1])
-
-
-squirrel_interactions = {
-        'chase': lambda: print("You are following a squirrel."),
-        'examine': lambda: print("It's a quick and nimble squirrel.")
-        }
-vending_machine_interactions = {
-        'press': lambda: print("You press a button on the vending machine. It dispenses an item."),
-        'hit': lambda: print("You hit the vending machine. A gold coin falls out."),
-        'examine': lambda: print("It's a vending machine filled with various items.")
-    }
-horseshoe_interactions = {
-        'examine': lambda: print("It's a horseshoe that seems to bring luck."),
-        'take': lambda: print("You take the horseshoe and put it in your inventory."),
-        'use': lambda: print("You use the horseshoe somehow.")
-    }
-horse_statue_interactions = {
-        'mount': lambda: print("You mount the horse statue."),
-        'dismount': lambda: print("You dismount from the horse statue."),
-        'nail shoe': lambda: print("You nail the horseshoe to the horse statue."),
-        'open mouth': lambda: print("You open the horse statue's mouth. A letter falls out."),
-    }
+    def unlock(self):
+        """Change the status of the location unlock."""
+        self.unlocked = True
 
 
 class World:
     """A text adventure game world storing all location, item and map data.
 
     Instance Attributes:
-        - map: a nested list representation of this world's map
-        - player:
-        - locations:
-        - item:
+        - self.map: a nested list representation of this world's map
+        - self.locations: a list of location, in the order of how it should be visited.
+
 
     Representation Invariants:
-        - # TODO
+        - self.map != []
+        - self.locations != []
     """
-
     def __init__(self, map_data: TextIO, location_data: TextIO, items_data: TextIO) -> None:
         """
         Initialize a new World for a text adventure game, based on the data in the given open files.
@@ -200,27 +194,11 @@ class World:
         - location_data: name of text file containing location data (format left up to you)
         - items_data: name of text file containing item data (format left up to you)
         """
-
-        # NOTES:
-
-        # map_data should refer to an open text file containing map data in a grid format, with integers separated by a
-        # space, representing each location, as described in the project handout. Each integer represents a different
-        # location, and -1 represents an invalid, inaccessible space.
-
-        # You may ADD parameters/attributes/methods to this class as you see fit.
-        # BUT DO NOT RENAME OR REMOVE ANY EXISTING METHODS/ATTRIBUTES IN THIS CLASS
-
-        # The map MUST be stored in a nested list as described in the load_map() function's docstring below
         self.map = self.load_map(map_data)
         self.locations = self.load_location(location_data)
-        # self.i
+        self.load_items(items_data)
 
-        # NOTE: You may choose how to store location and item data; create your own World methods to handle these
-        # accordingly. The only requirements:
-        # 1. Make sure the Location class is used to represent each location.
-        # 2. Make sure the Item class is used to represent each item.
-
-    # NOTE: The method below is REQUIRED. Complete it exactly as specified.
+    # Required method
     def load_map(self, map_data: TextIO) -> list[list[int]]:
         """
         Store map from open file map_data as the map attribute of this object, as a nested list of integers like so:
@@ -248,26 +226,38 @@ class World:
             if lines[i].startswith("LOCATION"):
                 location_number = int(lines[i].split()[1].strip())
                 points = int(lines[i + 1].strip())
-                brief_description = lines[i + 2].strip()
+                ok_commands = lines[i + 2].strip().split(',')
+                brief_description = lines[i + 3].strip()
                 long_description = ""
 
-                i += 3  # Skip to the start of long description
+                i += 4  # Skip to the start of long description
                 while i < len(lines) and lines[i].strip() != "END":
                     long_description += lines[i].strip() + "\n"
                     i += 1
-
-                location = Location(brief_description, long_description, points)
-                locations_list[location_number] = (location)
+                hint = lines[i-1].strip()
+                visited = False
+                unlocked = False
+                location = Location(brief_description, long_description, points, visited, unlocked, ok_commands, hint)
+                locations_list[location_number] = location
 
             i += 1
 
         return locations_list
 
-
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
-    def load_items(self, location_data: TextIO) -> dict[int, Location]:
-        """load items"""
-        pass
+    def load_items(self, items_data: TextIO):
+        """Load items from the given file and add them to their respective locations."""
+        for line in items_data:
+            parts = line.strip().split()
+            location_index = int(parts[0])
+            usable_index = int(parts[1])
+            item_value = int(parts[2])
+            item_name = ' '.join(parts[3:])
+
+            item = Item(item_name, item_value, usable_index)
+
+            if location_index in self.locations:
+                self.locations[location_index].add_item(item)
 
     def get_location(self, x: int, y: int) -> Optional[Location]:
         """Return Location object associated with the coordinates (x, y) in the world map."""
@@ -276,3 +266,64 @@ class World:
             if location_index != -1:
                 return self.locations[location_index]
         return None
+
+
+# Librarian Class to Inherit from Player
+class Librarian(Player):
+    """A Libraian - NPC like class that extends from Player.
+
+    Instance Attributes:
+        - self.name: name of the Librarian
+        - self.trade_items: the items that can be traded for from the Librarian
+        - self.spawn_locations: a list of location_index that librarian can spawn in
+        - self.spawned_locations: a list of location_index that librarian has already spawned in
+        - self.interacted: boolean value of whether librarian in the specific location has been interacted with
+
+    Representation Invariants:
+        - self.map != []
+        - self.locations != []
+        - len(self.spawn_locations) >= 0
+    """
+    def __init__(self, x: int, y: int, name: str, trade_items: list):
+        super().__init__(x, y)
+        self.name = name
+        self.trade_items = trade_items
+        # Randomly selects 3 rooms to spawn
+        #self.spawn_locations = random.sample(range(2, 6), 3)
+        self.spawn_locations = [2,3,4]
+        self.spawned_locations = []
+        self.interacted = False
+
+    def bargain(self, player) -> None:
+        "Randomly add tbucks to the player upon command [bargain] is called"
+        added = random.choice([20, 25, 50, 75, 100, 150])
+        player.tbucks += added
+        print(f"Tbucks incresed by {added}")
+        print(f"Tbucks balance: {player.tbucks}")
+    def check_spawn(self, player_location: tuple) -> bool:
+        """ Check and handle spawning of the NPC at the player's current location. """
+        # Check if the librarian is supposed to spawn at the player's current location and hasn't already spawned there
+        if player_location in self.spawn_locations and player_location not in self.spawned_locations:
+            self.x, self.y = player_location  # Set NPC location to player location
+            self.spawned_locations.append(player_location)
+            self.interacted = False  # Reset interacted to allow a new interaction
+            print(f"A Librarian has spawned at location {player_location}... ")
+            return True
+        return False
+
+    def trade_for_bucks(self, player, item) -> None:
+        """ exchange player's input item for T-bucks according to its worth."""
+        items = [it for it in player.inventory if it.name.strip().lower() == item.strip().lower()]
+
+        if len(items) == 0:
+            print("You don't have that item.")
+        else:
+            item = items[0]
+            if item.worth == -1:
+                print("Why are you trading something you need? ")
+            else:
+                player.tbucks += item.worth
+                player.remove_item(item)
+                print(f"{item.name} has been traded | Tbucks balance increased by {item.worth}")
+                print(f"Tbucks balance: {player.tbucks}")
+

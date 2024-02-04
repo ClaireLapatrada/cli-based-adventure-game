@@ -1,0 +1,78 @@
+read rules
+start
+follow squirrel
+look
+inspect vending
+vending
+type code
+00000
+type code
+correct_code
+type code
+vend_me_money
+type code
+squirrel
+type code
+univeristy
+type code
+college
+type code
+acorn
+inspect squirrel
+trade acorn
+go north
+go south
+go east
+loot
+trade peanut
+bargain for more
+bargain for more
+bargain for more
+bargain for more
+bargain for more
+bargain for more
+bargain for more
+trade cashew
+stop trade
+look
+paintings
+clues
+talk
+next
+next
+next
+next
+next
+next
+next
+secret
+interaction
+go north
+go east
+go south
+loot
+my inventory
+trade tcard
+stop trade
+look
+inspect
+use horse shoe
+inspect
+keep
+mount
+interaction
+take the elevator
+2
+2
+14
+telescope
+open box
+123456
+telescope
+open box
+697655
+acquire
+go north
+
+
+
