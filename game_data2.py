@@ -71,8 +71,7 @@ class Player:
         self.inventory.remove(item)
 
     def remove_item(self, item):
-        """ print the item that is dropped and remove it from player's inventory"""
-        print(f"{item.name} has been dropped")
+        """remove item from player's inventory"""
         self.inventory.remove(item)
 
     def check_use_item(self, item: str, location_index: int, action: Optional = None, *args):
@@ -99,7 +98,6 @@ class Player:
                     return False
                 else:
                     print("You don't have that item.")
-                    return False
 
 
 class Item:
