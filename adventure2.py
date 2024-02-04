@@ -683,9 +683,9 @@ def handle_librarian_interaction(com, pl, librarian, w):
         print("Trade begins! Use commands like...\n"
               "[my inventory] : to check your Inventory \n"
               "[trade] : trade unused item for T-bucks, drop: to drop items \n"
-              "[bargain] : to ask nicely for MORE T-bucks]\n"
-              "[pity] : to Exit and leave librarian alone\n "
-              "WARNING: after [pity] you cannot loot this poor soul again")
+              "[bargain for more] : to ask nicely for MORE T-bucks]\n"
+              "[stop trade] : to Exit and leave librarian alone\n "
+              "WARNING: after [stop] you cannot loot this poor soul again")
     while True:
         inp = input(">> ").strip().lower()
         if len(inp.split()) >= 2:
@@ -699,10 +699,9 @@ def handle_librarian_interaction(com, pl, librarian, w):
                 player.step_counts += 1
                 print("drop logic #TODO")
             elif do.startswith('bargain'):
-                player.step_counts += 1
-                player.tbucks += 1
+                librarian.bargain(player)
                 print(player.tbucks)
-            elif do.startswith('pity'):
+            elif do.startswith('stop'):
                 player.step_counts += 1
                 librarian.interacted = True #pity()
                 print("Libraian: Phew! Thank you for leaving me alone")
