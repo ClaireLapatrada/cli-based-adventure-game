@@ -294,11 +294,15 @@ class Librarian(Player):
         super().__init__(x, y)
         self.name = name
         self.trade_items = trade_items
-        # self.spawn_locations = random.sample(range(2, 7), 3)  # Randomly selects 3 rooms to spawn
-        self.spawn_locations = [4 , 2, 3]
+        self.spawn_locations = random.sample(range(2, 6), 3)  # Randomly selects 3 rooms to spawn
         self.spawned_locations = []  # Tracks locations where the NPC has already spawned
         self.interacted = False
 
+    def bargain(self, player):
+        added = random.choice([20, 25, 50, 75, 100, 150])
+        player.tbucks += added
+        print(f"Tbucks incresed by {added}")
+        print(f"Tbucks balance: {player.tbucks}")
     def check_spawn(self, player_location: tuple):
         """ Check and handle spawning of the NPC at the player's current location. """
         # Check if the librarian is supposed to spawn at the player's current location and hasn't already spawned there

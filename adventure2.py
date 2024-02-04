@@ -577,36 +577,6 @@ def handle_location6(com, pl, w):
         else:
             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
 
-# def handle_location6(com, pl, w):
-#     """Handle events at the Math Learning Center."""
-#     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
-#     print("Help sort the papers correctly to find the cheat sheet.")
-#
-#     # Check if the cheat sheet has already been found
-#     if 'Cheat Sheet' in [item.name for item in pl.inventory]:
-#         print("You have already found the cheat sheet. No need to sort more papers.")
-#         return True
-#
-#     while True:
-#         inp = input("Type 'sort' to start sorting papers or 'leave' to exit: ").strip().lower()
-#         if inp == 'sort':
-#             success = helper_sort()
-#             if success:
-#                 # Simulate finding the cheat sheet after successful sorting
-#                 cheat_sheet = Item('Cheat Sheet', 0, -1)  # Assuming -1 means it's not tied to a specific location
-#                 pl.acquire(cheat_sheet)
-#                 print("As you sort the papers, you find the cheat sheet hidden among them!")
-#                 return True  # End the location event successfully
-#             else:
-#                 print("Game Over. You sorted the papers incorrectly too many times.")
-#                 return False  # Signal game over or handle it appropriately
-#         elif inp == 'leave':
-#             print("You decide to leave the Math Learning Center.")
-#             return True
-#         else:
-#             print("Invalid command. Please type 'sort' to help or 'leave' to exit.")
-
-
 def helper_sort():
     """A helper function to simulate sorting Taylor Swift songs into the correct album piles."""
     albums_songs = {
@@ -696,9 +666,9 @@ def handle_librarian_interaction(com, pl, librarian, w):
         print("Trade begins! Use commands like...\n"
               "[my inventory] : to check your Inventory \n"
               "[trade] : trade unused item for T-bucks, drop: to drop items \n"
-              "[bargain] : to ask nicely for MORE T-bucks]\n"
-              "[pity] : to Exit and leave librarian alone\n "
-              "WARNING: after [pity] you cannot loot this poor soul again")
+              "[bargain for more] : to ask nicely for MORE T-bucks]\n"
+              "[stop trade] : to Exit and leave librarian alone\n "
+              "WARNING: after [stop] you cannot loot this poor soul again")
     while True:
         inp = input(">> ").strip().lower()
         if len(inp.split()) >= 2:
@@ -712,11 +682,9 @@ def handle_librarian_interaction(com, pl, librarian, w):
                 player.step_counts += 1
                 print("drop logic #TODO")
             elif do.startswith('bargain'):
-                player.step_counts += 1
-                got = random.choice([50, 100, 150])
-                player.tbucks += got
-                print(f"{got} Tbucks have been added to your account | Your current balance is {player.tbucks}")
-            elif do.startswith('pity'):
+                librarian.bargain(player)
+                print(player.tbucks)
+            elif do.startswith('stop'):
                 player.step_counts += 1
                 librarian.interacted = True # pity()
                 print("Libraian: Phew! Thank you for leaving me alone")
@@ -815,13 +783,7 @@ def handle_command(com, pl, w, librarian):
         if com.startswith('loot'):
             handle_librarian_interaction(com, pl, librarian, w)
             return True
-    #
-    # if librarian_present and not librarian.interacted:
-    #     print("You're in a territory with a librarian that can traded. !Must Loot! Type [loot] to interact. ")
-    #     if command.startswith('loot'):
-    #         print("loot librarian")
-    #         handle_librarian_interaction(command, pl, librarian, w)
-    #         return True
+
     if player.step_counts > max_count:
         print("Game Over. The exam started. You didn't make it there on time.")
         return False
