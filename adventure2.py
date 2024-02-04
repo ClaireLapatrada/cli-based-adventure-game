@@ -895,6 +895,39 @@ def print_rules():
     print("-----------------")
 
 
+def determine_rank(dollars, moves, max_dollars, max_moves):
+    """Calculate final ranking"""
+    dollars_percentage = dollars / max_dollars
+    moves_percentage = moves / max_moves
+
+    # Define thresholds for each rank
+    gold_threshold = 0.8
+    silver_threshold = 0.6
+    bronze_threshold = 0.0
+
+    score = 0
+    if dollars_percentage >= gold_threshold:
+        score += 80
+    elif dollars_percentage >= silver_threshold:
+        score += 60
+    else:
+        score += 0
+
+    if moves_percentage >= gold_threshold:
+        score += 0
+    elif moves_percentage >= silver_threshold:
+        score += 60
+    else:
+        score += 80
+
+    if score >= gold_threshold * 160:
+        return 'Gold'
+    elif score >= silver_threshold * 160:
+        return 'Silver'
+    else:
+        return 'Bronze'
+
+
 def wrapper():
     """Print player's game summary and suggestions."""
     tbucks = player.tbucks
@@ -902,18 +935,15 @@ def wrapper():
     all_worth = sum([item.worth for item in all_items if item.worth > 0])
     all_worth += 1500 # the three required items (500 each)
     missed = [item for item in player.inventory if item.name.lower() not in ['tcard', 'cheatsheet', 'lucky pen']]
-    if tbucks >= 3000:
-        rank = "Gold"
-    elif 2000 <= tbucks < 3000:
-        rank = "Silver"
-    else:
-        rank = "Bronze"
+    missed_worth = sum([item.worth for item in missed if item.worth > 0])
+    rank = determine_rank(tbucks, player.step_counts, all_worth, 42)
     print()
-    print("You missed out on:")
     time.sleep(1)
-    print(f"- {all_worth - tbucks} Tbucks from not trading the following items with the librarian: ")
-    for item in missed:
-        print(f"    - {item.name} ({item.worth} Tbucks)")
+    if all_worth > tbucks:
+        print("You missed out on:")
+        print(f"- {missed_worth} Tbucks from not trading the following items with the librarian: ")
+        for item in missed:
+            print(f"    - {item.name} ({item.worth} Tbucks)")
     time.sleep(1)
     print()
     print("Achievements:")
@@ -922,10 +952,16 @@ def wrapper():
     time.sleep(1)
     print(f"- You have earned {tbucks} Tbucks in total.")
     time.sleep(1)
-    print(f"Based on your Tbucks and interaction count, you've earned a {rank} ranking!")
+    print(f"- Based on your Tbucks and interaction count, you've earned a {rank} ranking!")
 
 
 if __name__ == "__main__":
+    # import python_ta
+    #
+    # python_ta.check_all(config={
+    #     'max-line-length': 120,
+    #     'extra-imports': ['hashlib']
+    # })
     world = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     player = Player(0, 0)
     librarian = Librarian(0, 0, "Librarian", ["book", "scroll"])
