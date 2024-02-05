@@ -26,8 +26,9 @@ def handle_location0(local_world: World, local_player: Player) -> Optional:
 
 
 # Location-1 (Vending) Helper Functions
-def handle_location1(local_world: World, local_player: Player, local_traded: bool) -> Optional:
+def handle_location1(local_world: World, local_player: Player, local_actions: dict) -> Optional:
     """Start location 1's events if it has not been cleared yet, else notify the player."""
+    global traded
     if not local_world.locations[2].unlocked:
         # Ensure the player interacts with the vending machine first
         inp = input('Try inspecting the vending machine: type [vending]: ').strip().lower()
@@ -35,7 +36,7 @@ def handle_location1(local_world: World, local_player: Player, local_traded: boo
             inp = input('Try inspecting the vending machine by typing [vending], or learn to type!').strip().lower()
         local_player.step_counts += 1
         # Assuming passkey_vending is a function that handles the puzzle and unlocks the next location upon success
-        passkey_vending(local_world, local_player)
+        passkey_vending(local_world, local_player, local_actions)
         print("\n You have successfully looted the vending machine! \n ")
         print("Another door appears... that seems to lead to another hallway east.")
         print("Only UofT Students are allowed in though, but you don't have your TCard. \n")
@@ -54,10 +55,10 @@ def handle_location1(local_world: World, local_player: Player, local_traded: boo
     squirrel.trade_items = ['Tcard']
 
     # Trade interaction loop
-    while not local_traded:
+    while not traded:
         inp = input(">> ").strip().lower()
-        if inp in actions:
-            actions[inp]()
+        if inp in local_actions:
+            local_actions[inp]()
         elif inp.startswith('trade '):
             local_player.step_counts += 1
             _, item = inp.split(' ', 1)
@@ -68,16 +69,16 @@ def handle_location1(local_world: World, local_player: Player, local_traded: boo
                 local_player.tbucks += 500
                 print("\n -- You have been gifted 500 Tbucks for obtaining the required item! -- \n\n"
                       "The squirrel scampers away happily.")
+                traded = True
                 local_world.locations[2].unlock()
-                local_traded = True
             else:
                 print(f"The squirrel doesn't seem interested in {item}. Try trading something else.")
         else:
             print("To trade with the squirrel, type 'trade [item]'.")
-    return local_traded  # Return the status of the trade
+    return traded
 
 
-def passkey_vending(local_world: World, local_player: Player) -> Optional:
+def passkey_vending(local_world: World, local_player: Player, local_actions: dict) -> Optional:
     """Ask player for input for the vending machine, drop item when the correct code has been input.
     Handle all other commands."""
     vending_machine = ['acorn', 'almond', 'peanut', 'cashew', 'pecan', 'horse shoe']
@@ -99,8 +100,8 @@ def passkey_vending(local_world: World, local_player: Player) -> Optional:
                 return True
             else:
                 print("Nothing happens. It seems to be the wrong code. Type [type code] to try again.")
-        elif inp in actions:
-            actions[inp]()
+        elif inp in local_actions:
+            local_actions[inp]()
         else:
             print("You are not sure what to do with that.")
 
@@ -171,7 +172,7 @@ def door_puzzle(local_world: World) -> Optional:
 
 # Location 3 - (Horse Statue)
 def handle_location3(local_command: str, local_world: World, local_player: Player,
-                     local_used: bool) -> Optional:
+                     local_actions: dict) -> Optional:
     """Start location 3 events if it has not been cleared yet, else notify the player."""
     if local_command == 'inspect':
         local_player.step_counts += 1
@@ -180,38 +181,38 @@ def handle_location3(local_command: str, local_world: World, local_player: Playe
         else:
             print("Hmmm... the horse's front left foot doesn't look quite right. It's missing something."
                   " Perhaps you can [use] something you have on it?")
-            return horse_statue_shoe(local_world, local_player, local_used)
+            return horse_statue_shoe(local_world, local_player, local_actions)
     return True
 
 
-def horse_statue_shoe(local_world: World, local_player: Player, local_used: bool) -> Optional:
+def horse_statue_shoe(local_world: World, local_player: Player, local_actions: dict) -> Optional:
     """Ask the player for input to use the horse shoe, call horse_statue_read() once the correct item has been used.
     Handle all other commands."""
-    while not local_used:
+    global used
+    while not used:
         inp = input(">> ").strip().lower()
         if len(inp.split()) < 2 and inp == "use":
             local_player.step_counts += 1
             print("Use what?")
-        elif len(inp.split()) < 2 and inp in actions:
-            actions[inp]()
+        elif len(inp.split()) < 2 and inp in local_actions:
+            local_actions[inp]()
         elif len(inp.split()) < 2:
             print("You are not sure what to do with that.")
         elif len(inp.split()) >= 2 and inp.split()[0] == 'use':
             _, item = inp.split(' ', 1)
             local_player.step_counts += 1
-            read = horse_statue_read(local_world, local_player)
-            local_used = local_player.check_use_item(item, 3, read)
-            if local_used:
+            used = player.check_use_item(item, 3, horse_statue_read, local_world, local_player, local_actions)
+            if used:
                 return True
             else:
-                horse_statue_shoe(local_world, local_player, local_used)
+                horse_statue_shoe(local_world, local_player, local_actions)
                 return True
         else:
             print("You are not sure what to do with that.")
     return True
 
 
-def horse_statue_read(local_world: World, local_player: Player) -> Optional:
+def horse_statue_read(local_world: World, local_player: Player, local_actions: dict) -> Optional:
     """Ask player for the right command to inspect the letter and keep it, call horse_statue_go when completed.
     Handle all other commands."""
     print("The horse's mouth opened up. Seems like something is in there.")
@@ -229,14 +230,14 @@ def horse_statue_read(local_world: World, local_player: Player) -> Optional:
                 inp = input(">> ").strip().lower()
             player.step_counts += 1
             acquire_all_except(local_world, local_player)
-            return horse_statue_go(local_world)
-        elif inp in actions:
-            actions[inp]()
+            return horse_statue_go(local_world, local_actions)
+        elif inp in local_actions:
+            local_actions[inp]()
         else:
             print("You are not sure what to do with that.")
 
 
-def horse_statue_go(local_world: World) -> Optional:
+def horse_statue_go(local_world: World, local_actions: dict) -> Optional:
     """Ask user for the correct command, print progress bar for riding the horse,
     unlock and update new location as arrived. Print new location description. Handle all other commands."""
     print("Amazing! The horse gave you extra items from its saddle bag - kept for trading later!\n"
@@ -253,13 +254,13 @@ def horse_statue_go(local_world: World) -> Optional:
             player.set_location(4, 1)
             print(new_location.long_description)
             return True
-        elif inp in actions:
-            actions[inp]()
+        elif inp in local_actions:
+            local_actions[inp]()
         else:
             print("You are not sure what to do with that.")
 
 
-def handle_location4(local_command: str, local_world: World, local_player: Player) -> Optional:
+def handle_location4(local_command: str, local_world: World, local_player: Player, local_actions: dict) -> Optional:
     """Start location 4 events if it has not been cleared yet, else notify the player."""
     if local_command == 'take the elevator' and local_world.locations[5].unlocked:
         local_player.step_counts += 1
@@ -279,11 +280,11 @@ def handle_location4(local_command: str, local_world: World, local_player: Playe
         print("Amongst the pile of posters, there is a suspicious looking black box with \n"
               "'lenx' carved at the front.")
         print("Luckily, the telescope is right in front of you.")
-        return stars_puzzle(local_world, local_player)
+        return stars_puzzle(local_world, local_player, local_actions)
     return True
 
 
-def stars_puzzle(local_world: World, local_player: Player) -> Optional:
+def stars_puzzle(local_world: World, local_player: Player, local_actions: dict) -> Optional:
     """ Print out stars and repeat prompts until user input the correct pin on the pin pad. """
     solution = "697655"
     print("To access the telescope, type 'telescope'. To access the black box, type 'open box'.")
@@ -321,8 +322,8 @@ def stars_puzzle(local_world: World, local_player: Player) -> Optional:
         elif inp == "read letter":
             player.step_counts += 1
             print("The letter reads [It's ASTRONOMY, we're two worlds apart]")
-        elif inp in actions:
-            actions[inp]()
+        elif inp in local_actions:
+            local_actions[inp]()
         else:
             print("You are not sure what to do with that.")
 
@@ -429,7 +430,7 @@ def puzzle_caesar_salad(local_world: World) -> Optional:
         player.step_counts += 1
 
 
-def handle_location6(local_world: World, local_player: Player) -> Optional:
+def handle_location6(local_world: World, local_player: Player, local_actions: dict) -> Optional:
     """Handle events at the Math Learning Center."""
     print("You enter the Math Learning Center and find a research assistant in need of help sorting papers.")
 
@@ -449,8 +450,8 @@ def handle_location6(local_world: World, local_player: Player) -> Optional:
             else:
                 print("Game Over. You sorted the papers incorrectly too many times.")
                 return False  # Signal game over or handle it appropriately
-        elif inp in actions:
-            actions[inp]()
+        elif inp in local_actions:
+            local_actions[inp]()
         else:
             print("Invalid command. Please type 'sort' to help:")
 
@@ -463,13 +464,13 @@ def found_cheatsheet(local_world: World, local_player: Player) -> None:
     get_cheat_sheet = input("Wait! Is that an unusual spotting! "
                             "[acquire] the item before it gets lost again ")
     while get_cheat_sheet != 'acquire':
-        get_cheat_sheet = input("Try again! [acquire] it before it gets lost in the midst of MLC.")
+        get_cheat_sheet = input("Try again! [acquire] it before it gets lost in the midst of MLC: ")
     # Simulate finding the cheat sheet after successful sorting
     acquire_all_except(local_world, local_player)
     player.tbucks += 500
     print("\n-- You have been gifted 500 Tbucks for obtaining the required item -- \n")
     print("--------------------------------------------")
-    inp = input()
+    inp = input('Type [inventory]: ')
     if inp == 'inventory':
         player.show_inventory()
         print("You have cleared all the puzzle in the game!")
@@ -555,7 +556,7 @@ def flip_blackboard() -> Optional:
     return False
 
 
-def handle_librarian_interaction(local_command: str, local_librarian: Librarian) -> Optional:
+def handle_librarian_interaction(local_command: str, local_librarian: Librarian, local_actions: dict) -> Optional:
     """ handle any interaction with the librarian. """
     if local_command.startswith('loot'):
 
@@ -587,8 +588,8 @@ def handle_librarian_interaction(local_command: str, local_librarian: Librarian)
                 print("Type 'look' to keep exploring the location")
                 return False
         else:
-            if inp in actions:
-                actions[inp]()
+            if inp in local_actions:
+                local_actions[inp]()
             else:
                 print(f"{inp} what? Be rigorous.")
 
@@ -628,16 +629,15 @@ def look_action(local_world: World) -> bool:
 
 
 def handle_command(local_command: str, local_world: World, local_player: Player,
-                   local_librarian: Librarian, local_traded: bool, local_used: bool) -> Optional:
+                   local_librarian: Librarian, local_actions: dict) -> Optional:
     """Handle the move commands between each location. Check move status and move player accordingly.
     Call each location's handle function when current_location_index is updated. Handle all other commands."""
-    global max_count
     current_location_index = local_world.map[local_player.x][local_player.y]
 
     sub_actions = {
         'quit': lambda: False,  # Signal to exit the game loop
         'interaction': lambda: print(
-            f"You have {max_count - player.step_counts + 1} interactions left before the exam starts!"),
+            f"You have {42 - player.step_counts + 1} interactions left before the exam starts!"),
         'help': lambda: print(f"Available commands: {local_world.get_location(player.x, player.y).valid_commands}"),
         'score': lambda: print(
             f"You currently have {player.tbucks} Tbucks. Trade with the librarian for to obtain more."),
@@ -669,23 +669,23 @@ def handle_command(local_command: str, local_world: World, local_player: Player,
     if librarian_present:
         print("You're in a territory with a librarian that can trade with you. Type [loot] to begin trading.")
         if local_command.startswith('loot'):
-            handle_librarian_interaction(local_command, local_librarian)
+            handle_librarian_interaction(local_command, local_librarian, local_actions)
             return True
 
-    if local_player.step_counts > max_count:
+    if local_player.step_counts > 42:
         print("Game Over: you ran out of moves. The exam started. You didn't make it there on time.")
         return False
-    elif local_player.step_counts + 1 > max_count - 10:
-        print(f"[WARNING] Be wise! {max_count - local_player.step_counts + 1} moves until the exam starts")
+    elif local_player.step_counts + 1 > 32:
+        print(f"[WARNING] Be wise! {42 - local_player.step_counts + 1} moves until the exam starts")
 
     location_handlers = {
         0: lambda: handle_location0(local_world, local_player),
-        1: lambda: handle_location1(local_world, local_player, local_traded),
+        1: lambda: handle_location1(local_world, local_player, local_actions),
         2: lambda: handle_location2(local_command, local_world),
-        3: lambda: handle_location3(local_command, local_world, local_player, local_used),
-        4: lambda: handle_location4(local_command, local_world, local_player),
+        3: lambda: handle_location3(local_command, local_world, local_player, local_actions),
+        4: lambda: handle_location4(local_command, local_world, local_player, local_actions),
         5: lambda: handle_location5(local_world, local_player),
-        6: lambda: handle_location6(local_world, local_player),
+        6: lambda: handle_location6(local_world, local_player, local_actions),
     }
     if current_location_index in location_handlers:
         return location_handlers[current_location_index]()
@@ -848,19 +848,16 @@ if __name__ == "__main__":
         world = World(map_file, location_file, item_file)
     player = Player(0, 0)
     librarian = Librarian(0, 0, "Librarian")
-    # Seed for Demo Purposes
-    librarian.spawn_seed(10)
-    print(librarian.spawn_locations)
     # Set up
-    current_painting_index = 0
     traded = False
+    current_painting_index = 0
     used = False
     max_count = 42
 
     actions = {
         "inventory": player.show_inventory,
         "interaction": lambda: print(
-            f"You have {max_count - player.step_counts + 1} interactions left before the exam starts!"),
+            f"You have {42 - player.step_counts + 1} interactions left before the exam starts!"),
         "hint": lambda: print(world.get_location(player.x, player.y).hint),
         "help": lambda: print(f"Available commands: {world.get_location(player.x, player.y).valid_commands}"),
         "item": lambda: print(
@@ -878,6 +875,11 @@ if __name__ == "__main__":
         ░▀░▀░ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀▀ ▀░░░▀ ▀▀▀ 　 ░░▀░░ ▀▀▀▀ 　 ░▀▀▀ ▀▀▀▀ ▀░░ ░░▀░░ ▀▀▀ ▀░░▀ ▀░▀▀ ▀▀▀
 
     """)
+    secret_code = input("Staff Secret Code: ")
+    while not secret_code.isnumeric():
+        secret_code = input("Staff Secret Code: ")
+    # Seed for Demo Purposes
+    librarian.spawn_seed(int(secret_code))
     start_choice = input("Type [Read Rules]: ")
     while start_choice.lower() != 'read rules':
         start_choice = input("Try Again! Type [Read Rules]: ")
@@ -896,7 +898,7 @@ if __name__ == "__main__":
     while continue_game:
         current_location = world.get_location(player.x, player.y)
         command = input(">> ").strip().lower()
-        continue_game = handle_command(command, world, player, librarian, traded, used)
+        continue_game = handle_command(command, world, player, librarian, actions)
         if command == 'item':
             print(f"Available items here: {[item.name for item in world.get_location(player.x, player.y).items]}")
         elif command == 'inventory':
