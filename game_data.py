@@ -314,10 +314,13 @@ class Librarian(Player):
         super().__init__(x, y)
         self.name = name
         # Randomly selects 3 rooms to spawn
-        # self.spawn_locations = random.sample(range(2, 6), 3)
-        self.spawn_locations = [2, 3, 4]
+        self.spawn_locations = []
         self.spawned_locations = []
         self.interacted = False
+
+    def spawn_seed(self, seed: int):
+        random.seed(seed)
+        self.spawn_locations = random.sample(range(2, 6), 3)
 
     def bargain(self, player: Player) -> None:
         """ Randomly add tbucks to the player upon command [bargain] is called."""
